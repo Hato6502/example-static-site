@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106651880-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-106651880-2");
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-7008780049786244",
+        enable_page_level_ads: true
+      });
+    </script>
+
+    <meta charset="utf-8" />
+    <title>【jQuery不要】JS で章番号 &amp; リンク付きの目次を自動生成する - Hood</title>
+    <meta
+      name="description"
+      content="内容をひと目で確認できる目次を、JavaScript で自動生成してデザインを整える方法を紹介します。"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@bluehood_admin" />
+    <meta property="og:url" content="https://b-hood.site/articles/table-of-contents/" />
+    <meta property="og:title" content="【jQuery不要】JS で章番号 &amp; リンク付きの目次を自動生成する" />
+    <meta
+      property="og:description"
+      content="内容をひと目で確認できる目次を、JavaScript で自動生成してデザインを整える方法を紹介します。"
+    />
+    <meta property="og:image" content="https://b-hood.site/storage/articles/images/5b213ef0.jpg" />
+
+    <link rel="canonical" href="https://b-hood.site/articles/table-of-contents/" />
+    <link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32" />
+    <link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192" />
+
+    <link href="/css/app.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
+  </head>
+  <body>
+    <nav>
+      <div>
+        <a href="https://b-hood.site/"><h1>Hood</h1></a>
+        <div class="nav-menu">
+          <a href="https://b-hood.site/articles/">Articles</a>
+          <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
+          <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
+          <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
+        </div>
+        <div class="hamburger-button">Menu</div>
+      </div>
+    </nav>
+    <article class="articles-show">
+      <div>
+        <div>2019-05-02</div>
+        <h1>【jQuery不要】JS で章番号 &amp; リンク付きの目次を自動生成する</h1>
+        <div class="content">
+          <picture>
+            <source
+              type="image/webp"
+              srcset="/storage/articles/images/5b213ef0.webp 1x, /storage/articles/images/62fd5d1b.webp 2x"
+            />
+            <img src="/storage/articles/images/5b213ef0.jpg" srcset="/storage/articles/images/62fd5d1b.jpg 2x" />
+          </picture>
+          <p>
+            WordPress 製のサイトなどで見かける<strong>目次</strong>。
+            そのページの内容がリストとしてひと目で確認できるため、Web サイトにも大きな役割を果たします。 JavaScript
+            で目次を自動生成する方法を紹介します。
+          </p>
+          <p style="text-align: center; "><b>↓この目次のことです！</b></p>
+          <ol class="table-of-contents"></ol>
+          <h2>JavaScript で目次を作る</h2>
+          <p>
+            基本的に見出しは h1〜h6 でタグ付けされているかと思います。
+            これらのタグには見出しという情報だけでなく、<strong>見出しどうしの階層関係</strong>も表現されています。
+            よって、h1〜h6 タグは目次を作るのに最適な情報源と言えます。
+          </p>
+          <p>
+            目次を置く場所に <code>&lt;ol class="table-of-contents"&gt;&lt;/ol&gt;</code> を配置して、この要素のなかに
+            JavaScript で目次の情報を書き込んでいきます。
+          </p>
+          <p><script src="https://gist.github.com/Hato6502/e10e01e891fa9abd56eda3d6beedeef0.js"></script></p>
+          <p>上記が目次を自動生成する JavaScript の完成形になります。</p>
+          <h3>QuerySelectorAll で h1〜h6 タグを探す</h3>
+          <pre class="prettyprint linenums">
+const table_of_contents = document.querySelectorAll(".table-of-contents");
+const headings = table.parentElement.querySelectorAll("h1, h2, h3, h4, h5, h6");
+</pre
+          >
+          <p>まずは <code>.table-of-contents</code> を設置した親要素から、h1〜h6 要素を探し出します。</p>
+          <h3>h1〜h6 タグを元に目次要素を生成</h3>
+          <pre class="prettyprint linenums">
+const li = document.createElement("li");
+const a = document.createElement("a");
+const id = `section-${table_of_contents_counter++}`;
+const ol = document.createElement("ol");
+
+// 目次要素の生成
+a.textContent = heading.textContent;
+a.href = `#${id}`;
+li.appendChild(a);
+li.appendChild(ol);
+</pre
+          >
+          <p>
+            探し出したh1〜h6 タグが変数 <code>heading</code> に入ってループ処理されているとします。
+            まずは目次１行分に相当する li 要素を生成し、そのなかに a 要素と ol 要素を入れています。 a 要素には h1〜h6
+            のテキストを入れて、さらにアンカーリンクとして href 属性に
+            <code>#section-${table_of_contents_counter++}</code> を入れています。 変数
+            <code>table_of_contents_counter</code> は1、2、3…と増分していくので、生成されるアンカーリンクも
+            #section-1、#section-2、…となります。 ol 要素は、見出しの階層構造を作るために後で必要となります。
+          </p>
+          <h3>h1〜h6 タグにアンカーリンクも紐付け</h3>
+          <pre class="prettyprint linenums">
+// リンク先の生成
+heading.id = id;
+heading.classList.add("anchor-link");
+</pre
+          >
+          <p>
+            生成したアンカーリンクを h1〜h6 タグの id
+            に設定し、目次の要素をクリックしたときにページ内ジャンプするようにします。 さらに、必要であれば anchor-link
+            クラスを付けて CSS でデザイン調整しましょう。
+          </p>
+          <h3>階層構造の生成</h3>
+          <pre class="prettyprint linenums">
+// 階層構造の生成
+const level = Number(heading.tagName.substring(1));
+let parent;
+do {
+    parent = stack.pop();
+} while (parent.level >= level);
+parent.element.appendChild(li);
+stack.push(parent);
+stack.push({ level: level, element: ol });
+</pre
+          >
+          <p>
+            最後に、生成した li 要素を目次に挿入します。 このとき、h1〜h6
+            タグの<strong>レベル</strong>(h1→1、h2→2、…)に応じて、li 要素の挿入先が変わります。
+          </p>
+          <p>
+            たとえば、h1 タグの次に h2 タグがある場合は、h1 タグの見出しの配下に h2 タグがある、と判定します。
+            このレベルの比較によって、どの目次要素の配下に新しい li 要素を挿入するかを、上記 4〜7 行目で行っています。
+          </p>
+          <h2>CSS で見出しの番号を付ける</h2>
+          <p>JavaScript で生成した目次には何の CSS も適用していないため、見出しの番号が正しく付かないと思います。</p>
+          <pre class="prettyprint lang-html">
+1. h1 タグ
+  1. h2 タグ
+  2. h2 タグ
+2. h1 タグ
+</pre
+          >
+          <p>これを、CSS で正しく番号を振るようにします。</p>
+          <pre class="prettyprint linenums">
+.table-of-contents {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid rgba(0,0,0,0.1);
+  padding: 0.5rem 1rem;
+}
+.table-of-contents::before {
+  content: "目次";
+  font-weight: 700;
+}
+.table-of-contents ol {
+  counter-reset: ol-counter;
+}
+.table-of-contents ol li {
+  position: relative;
+  list-style: none;
+}
+.table-of-contents ol li::before {
+  counter-increment: ol-counter;
+  content: counters(ol-counter,".");
+  padding-right: 0.5rem;
+  position: absolute;
+  top: 0;
+  left: -40px;
+  display: inline-block;
+  text-align: right;
+  width: 40px;
+}
+</pre
+          >
+          <pre class="prettyprint lang-html">
+1 h1 タグ
+  1.1 h2 タグ
+  1.2 h2 タグ
+2 h1 タグ
+</pre
+          >
+          <h3>デフォルトの番号付けを無効化</h3>
+          <p>まずはデフォルトの番号付けを無効します。</p>
+          <pre class="prettyprint linenums">
+.table-of-contents ol li {
+  list-style: none;
+}
+</pre
+          >
+          <h3>counters で番号を作る</h3>
+          <pre class="prettyprint linenums">
+.table-of-contents ol {
+  counter-reset: ol-counter;
+}
+.table-of-contents ol li::before {
+  counter-increment: ol-counter;
+  content: counters(ol-counter,".");
+}
+</pre
+          >
+          <p>
+            CSS には counters という、番号を自動で振る便利な機能があります。 ol 要素を番号振りの原点として、以降は li
+            要素が来るたびにカウンタを +1 して表示しています。 その他、目次のデザインを整えるために
+            <code>position: absolute;</code> とかしていますが、ここでは省略いたします🙇
+          </p>
+          <h2>１からサイトを作るのは楽しい</h2>
+          <p>
+            WordPress を使えば、目次を生成するプラグインもありますしデザインも洗練されています。
+            しかし、１からサイトを作るのも、JavaScript や CSS の勉強としていいかなと思います！
+            私の場合は、１から作ろうとしてつまづいたことが、そのまま記事として書けて良い循環になっています😊
+          </p>
+
+          <div id="social"></div>
+        </div>
+        <h3>この記事の執筆者</h3>
+        <div class="author">
+          <picture>
+            <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x" />
+            <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502" />
+          </picture>
+          <div>
+            <h4>
+              hato6502 &emsp;<a
+                href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw"
+                class="twitter-follow-button"
+                data-show-screen-name="false"
+                data-show-count="false"
+                >Follow @bluehood_admin</a
+              ><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </h4>
+            <p>
+              中学生の頃に 6502 という CPU からプログラミングの世界に入りました。 C/C++
+              で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
+            </p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <footer>
+      <div>
+        2019 Hood<br />
+        <a href="https://github.com/blue-hood/apps" target="”_blank”">Published</a> under the MIT license. <br />
+        <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
+      </div>
+    </footer>
+    <script src="/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    <script src="https://b-hood.site/js/social-button.js"></script>
+  </body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106651880-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-106651880-2");
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-7008780049786244",
+        enable_page_level_ads: true
+      });
+    </script>
+
+    <meta charset="utf-8" />
+    <title>「静的サイトジェネレータ」という言葉だけで静的サイトを作った話 - Hood</title>
+    <meta name="description" content="Laravel &amp; wget &amp; nginx を使って簡易的な静的サイトを作ってみました。" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@bluehood_admin" />
+    <meta property="og:url" content="https://b-hood.site/articles/staticgen/" />
+    <meta property="og:title" content="「静的サイトジェネレータ」という言葉だけで静的サイトを作った話" />
+    <meta
+      property="og:description"
+      content="Laravel &amp; wget &amp; nginx を使って簡易的な静的サイトを作ってみました。"
+    />
+    <meta property="og:image" content="https://b-hood.site/storage/articles/images/2dfe71f9.jpg" />
+
+    <link rel="canonical" href="https://b-hood.site/articles/staticgen/" />
+    <link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32" />
+    <link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192" />
+
+    <link href="/css/app.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
+  </head>
+  <body>
+    <nav>
+      <div>
+        <a href="https://b-hood.site/"><h1>Hood</h1></a>
+        <div class="nav-menu">
+          <a href="https://b-hood.site/articles/">Articles</a>
+          <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
+          <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
+          <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
+        </div>
+        <div class="hamburger-button">Menu</div>
+      </div>
+    </nav>
+    <article class="articles-show">
+      <div>
+        <div>2019-05-18</div>
+        <h1>「静的サイトジェネレータ」という言葉だけで静的サイトを作った話</h1>
+        <div class="content">
+          <picture>
+            <source
+              type="image/webp"
+              srcset="/storage/articles/images/2dfe71f9.webp 1x, /storage/articles/images/2dfe71f8.webp 2x"
+            />
+            <img src="/storage/articles/images/2dfe71f9.jpg" srcset="/storage/articles/images/2dfe71f8.jpg 2x" />
+          </picture>
+          <p>
+            皆さんこんにちは。 私はつい最近<strong>静的サイトジェネレータ</strong>という言葉を聞きました。
+            「静的」に興味を惹かれた私が、静的サイトジェネレータという言葉だけで静的サイトを作ってみた話をまとめます。
+            今回の記事は私の憶測が多いのでご注意ください（笑）
+          </p>
+          <p>
+            なお、当サイトはこの記事の通りに Laravel &amp; wget &amp; nginx による静的サイトとなっています。
+            もしご興味があれば、<a href="https://github.com/blue-hood/apps">GitHub</a>を見ていただけると幸いです。
+          </p>
+          <ol class="table-of-contents"></ol>
+          <h2>静的サイトとは？</h2>
+          <p>
+            まず、<strong>静的サイト</strong>の意味から考える必要があります。
+            おそらくこれは静的なサイト、つまりリクエストに対して Web
+            サーバーのレスポンスコンテンツが変わらないということです。 ということは、HTML, CSS,
+            画像アセットなどの静的なファイルを提供するだけのサイトであれば広義の静的サイトに当てはまります。
+          </p>
+          <h2>静的サイトのメリット・デメリット</h2>
+          <p>
+            ただ html を提供するだけの静的サイトであれば、なんだかインターネット初期の '90
+            年代のように感じてしまいます。 そこで、静的サイトのメリットをまとめてみました。
+          </p>
+          <ul>
+            <li>Web サーバーが PHP などを実行することはないため、動的コンテンツによる脆弱性が存在しない。</li>
+            <li>すでにレスポンスコンテンツが用意されているため、高速である。</li>
+            <li>
+              レンタルサーバーなどでは PHP を実行できない場合も多く、静的サイトであればサーバーに求める要件が低い。
+            </li>
+          </ul>
+          <p>次に、静的サイトのメリットをまとめます。</p>
+          <ul>
+            <li>端末（スマホ、PC など）によってサーバーレスポンスを変化させることは難しい。</li>
+            <li>REST API や検索機能などの提供は不可能。</li>
+          </ul>
+          <h2>静的サイトジェネレータとは？</h2>
+          <p>
+            <strong>静的サイト</strong
+            >の意味が定まったところで、次は静的サイト<strong>ジェネレータ</strong>について考えます。
+            これは静的サイトを作る、つまり静的サイトを作る元データがあり、それをコンパイルしたりミックスインしたり……
+            して、静的コンテンツを作るツールと考えられます。 ということは、PHP で動的コンテンツを作り、それを
+            <code>php</code> コマンドで html 出力して Web サーバーで公開すれば、 PHP
+            は静的サイトジェネレータになるということです。 逆に、動的コンテンツそのものを Web
+            サーバーにアップロードし、アクセスがあった時点で PHP を実行して html をレスポンドするのであれば、 PHP
+            は動的サイトのエンジンやエグゼキュータと呼べるのでしょう。
+          </p>
+          <h2>クローラは静的サイトジェネレータ？</h2>
+          <p>
+            以上のことを踏まえると、どんな動的コンテンツでも、サーバーからダウンロードしたときには静的コンテンツになっていることになります。
+            （JavaScript による
+            <a href="https://developer.mozilla.org/ja/docs/Web/API/Document_Object_Model">DOM</a> 操作などは、
+            あくまでクライアント側での動的コンテンツであり、サーバーとしては静的であるとみなします。）
+            よって、ローカルな開発環境で動的サイトのサーバーを立ち上げ、それをクローラで html として取得すれば、
+            クローラは静的サイトジェネレータということになります。
+          </p>
+          <h2>Laravel &amp; wget &amp; nginx で静的サイトを作る</h2>
+          <p>
+            ということで、Laravel で動的サイトを作り、wget でクローリングして静的サイトを生成します。
+            具体的な作り方は後々新しい記事で紹介していきたいと思いますが、ここでは全体の概要を説明したいと思います。
+            なお、以下の例では <strong>GET クエリ</strong>（URL の ?
+            以降に続くクエリ）についても対応していますが、現在のところ動作確認していません。
+          </p>
+          <h3>Laravel</h3>
+          <p>
+            サイトデザインは PC とスマホで切り替える必要があっても、CSS の<a
+              href="https://developer.mozilla.org/ja/docs/Web/CSS/Media_Queries/Using_media_queries"
+              >メディアクエリ</a
+            >
+            によってクライアント側で対応するようにします。
+            また、検索機能などの動的なコンテンツは扱えないことを踏まえながら、開発をしていく必要があります。
+          </p>
+          <h3>wget</h3>
+          <p>
+            <code>wget</code> を使って、ローカルな Laravel サーバー localhost をクローリングします。 さらに、sitemap.xml
+            やエラーページなどはリンクがないため、個別に <code>curl</code> でクローリングしています。
+            さらに、クローリングした html ファイル内に含まれる「localhost」を、デプロイ先の
+            Webサーバーのドメインに置き換えます。
+            この処理をしないと、デプロイしたときにサイト内リンクが正しく機能しません。 また、nginx で GET
+            クエリに対応するために、ファイル名を置き換えています。
+          </p>
+          <pre class="prettyprint linenums">
+# クローリング
+wget -q --mirror --page-requisites --html-extension localhost
+curl -s localhost/sitemap.xml -o localhost/sitemap.xml
+curl -s localhost/404.html -o localhost/404.html
+curl -s localhost/50x.html -o localhost/50x.html
+mv localhost html
+
+# ドメイン置換
+grep -lr 'https://b-hood.site&/#039; html/* | xargs sed -i -e "s#https://b-hood.site/#${domain}#g"
+
+# ファイル名置換
+for path in `find html/ -name '*.html?*'`
+do
+  rename="${path//index.html?/_}"
+  rename="${rename//.html?/.html_}"
+  mv "${path}" "${rename}"
+done
+</pre
+          >
+          <h3>nginx</h3>
+          <p>
+            nginx で静的 html を提供しますが、URL に 〜.html がつかないように対応します。 まず、html ファイルは<a
+              href=""
+              >内部リダイレクト</a
+            >でのみアクセス可能とします。 そして、GET クエリがある場合は、レスポンドする html
+            ファイルを名前解決して内部リダイレクトします。
+          </p>
+          <pre class="prettyprint linenums">
+server {
+  listen       80;
+  server_name  apps.bluehood.net;
+
+  root   /usr/share/nginx/html;
+  index  index.html;
+  
+  # エラーページ
+  error_page  403 404              /404.html;
+  location = /404.html {
+    internal;
+  }
+  error_page   500 502 503 504  /50x.html;
+  location = /50x.html {
+    internal;
+  }
+
+  # html は内部リダイレクトのみ
+  location ~ \.html$ {
+    internal;
+  }
+
+  location / {
+    # html ルーティング
+    if ($is_args = ?) {
+      # GET パラメータ名前解決
+      rewrite ^(.*)$ ${uri}_${args}.html? break;
+    }
+  }
+}
+</pre
+          >
+          <h2>本来の静的サイトジェネレータ</h2>
+          <p>
+            以上の内容は、あくまで私が静的サイトジェネレータという言葉だけで静的サイトを作ってみた話です。
+            本来の静的サイトジェネレータの１つとして、<a href="https://www.gatsbyjs.org/">GatsbyJS</a>
+            というものがあります。 Gatsby では、<a href="https://reactjs.org/">React</a>
+            を使うことで静的サイトでありながらも動的なコンテンツをレンダリングするようです。
+          </p>
+          <p>
+            なお、当サイトはこの記事の通りに Laravel &amp; wget &amp; nginx による静的サイトとなっています。
+            もしご興味があれば、<a href="https://github.com/blue-hood/apps">GitHub</a>を見ていただけると幸いです。
+          </p>
+
+          <div id="social"></div>
+        </div>
+        <h3>この記事の執筆者</h3>
+        <div class="author">
+          <picture>
+            <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x" />
+            <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502" />
+          </picture>
+          <div>
+            <h4>
+              hato6502 &emsp;<a
+                href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw"
+                class="twitter-follow-button"
+                data-show-screen-name="false"
+                data-show-count="false"
+                >Follow @bluehood_admin</a
+              ><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </h4>
+            <p>
+              中学生の頃に 6502 という CPU からプログラミングの世界に入りました。 C/C++
+              で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
+            </p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <footer>
+      <div>
+        2019 Hood<br />
+        <a href="https://github.com/blue-hood/apps" target="”_blank”">Published</a> under the MIT license. <br />
+        <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
+      </div>
+    </footer>
+    <script src="/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    <script src="https://b-hood.site/js/social-button.js"></script>
+  </body>
+</html>

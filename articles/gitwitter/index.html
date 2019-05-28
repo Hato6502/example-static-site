@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106651880-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-106651880-2');
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script> (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-7008780049786244",
+    enable_page_level_ads: true
+    });
+    </script>
+
+      <meta charset="utf-8">
+<title>【Git×Twitter】連携 &amp; 通知してコミットの質を上げよう - Hood</title>
+ <meta name="description" content="Git と Twitter の連携をサーバーレスで導入する方法を紹介します。"> <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@bluehood_admin">
+<meta property="og:url" content="https://b-hood.site/articles/gitwitter/">
+<meta property="og:title" content="【Git×Twitter】連携 &amp; 通知してコミットの質を上げよう">
+ <meta property="og:description" content="Git と Twitter の連携をサーバーレスで導入する方法を紹介します。"> <meta property="og:image" content="https://b-hood.site/storage/articles/images/dc698745.jpg">
+
+<link rel="canonical" href="https://b-hood.site/articles/gitwitter/">
+<link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32">
+<link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192">
+
+    <link href="/css/app.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
+  </head>
+  <body>
+    <nav>
+  <div>
+    <a href="https://b-hood.site/"><h1>Hood</h1></a>
+    <div class="nav-menu">
+      
+      <a href="https://b-hood.site/articles/">Articles</a>
+      <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
+      <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
+      <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
+    </div>
+    <div class="hamburger-button">Menu</div>
+  </div>
+</nav>
+      <article class="articles-show">
+    <div>
+      <div>2019-05-02</div>
+      <h1>【Git×Twitter】連携 &amp; 通知してコミットの質を上げよう</h1>
+      <div class="content">
+        <picture>
+  <source type="image/webp" srcset="/storage/articles/images/dc698745.webp 1x, /storage/articles/images/e5b5e4ae.webp 2x">
+  <img src="/storage/articles/images/dc698745.jpg" srcset="/storage/articles/images/e5b5e4ae.jpg 2x">
+</picture>
+<p>いつも私は Git のコミットメッセージを適当に済ませてしまうのですが、<code>git push</code> するとツイートされる仕組みを導入したらコミットメッセージの質が格段に上がりました。</p>
+<p>導入前
+<pre class="prettyprint lang-html">
+・Translating JS to C++ ...
+・Translating JS to C++ now...
+・Translating JS to C++ ... libuuid used.
+・Merge pull request #8 from blue-hood/twiemoji  …
+・Use Twemoji to display same font each OS.
+</pre></p>
+<p>導入後
+<pre class="prettyprint lang-html">
+・WebAssemblyのpthreadはcreateの数に上限があるらしいからお洋服買ってくる。
+・Component は Sketch の unique_ptr にして高速化。for 文での参照渡しを徹底した。
+・shared_ptr の循環参照を解消し、高速化のため weak_ptr ではなく生ポインタで代替しました。
+・シミュレーション時は生ポインタと参照渡しを使って高速化した。
+・C++ の高速化をする前にバックアップコミットします。
+</pre></p>
+<p>（英語から日本語に変わってるのはさておき、）コミットメッセージの内容が具体的になりました。また、Twitter を意識してかちょっと感情的なところもちらほらありますね。このような Git と Twitter の連携を<strong>サーバーレスで</strong>導入する方法を紹介します。</p>
+<p><a href="#install">インストール方法</a></p>
+<p>2019/03/30
+gitwitter のレアケース対策をしました。</p>
+<ol class="table-of-contents"></ol>
+<h2>Webhook は意外と不便</h2>
+<p>Git と Twitter の連携でメジャーと思われるのは、<a href="https://www.google.co.jp/search?q=Webhook">Webhook</a> を利用する方法です。GitHub や Bitbucket には、リポジトリへの push イベントごとに POST リクエストを投げてくれる機能があります。それを別途 Web サーバーで拾ってツイートします。いわゆる<a href="https://www.google.co.jp/search?q=%E3%82%AF%E3%83%A9%E3%82%A6%E3%83%89%E3%83%8F%E3%83%96">クラウドハブ</a>はこの機能を利用しているわけですね。</p>
+<p>しかし、クラウドハブを利用するには月額料金がかかったり、無料だとしても月ごとの使用回数に制限があったりします。また自前で Webhook を拾うには、サーバーが必要なのはもちろん HTTPS 通信をするためのドメインと証明書なども必要になります。Git の push をツイートするためだけに Webhook を利用するのは、ちょっとオーバーな気がします。</p>
+<p>また、実際に私が Webhook を導入してみて思ったのは、ツイートするかを毎回制御できないため不便だということです。たとえば、タイポを修正するだけのささいな push に対してもツイートされてしまい、手動で無駄なツイートを消すということがありました。タイムラインを荒らしてしまったと思いますね。</p>
+<h2>サーバーレスで連携する</h2>
+<p>そこで、Webhook を使わずクライアントで動かす連携アプリを作ることにしました。これならサーバーレスだしツイートするかも毎回決めることができます。ツイートする文章はシェルスクリプトで <code>git log</code> を呼び出したりして組み立てました。ツイートするには <a href="https://twitteroauth.com/">TwitterOAuth</a> を使って <a href="https://developer.twitter.com/en/docs.html">Twitter REST API</a> を叩く PHP スクリプトを書きました。使い方はこんな感じです。</p>
+<pre class="prettyprint">
+$ commit -m "gitwitter のテストです。"
+$ gitwitter
+</pre>
+<h3 id="install">インストール</h3>
+<p>私が適当にスクラッチした <code>tweet</code> コマンドと <code>gitwitter</code> コマンドのインストール方法を紹介します。自分の GitHub アカウントでしかテストしてません、問題があったら <a href="https://ja.wikipedia.org/wiki/MIT_License">MIT ライセンス</a>なので自由に改変しちゃってください。</p>
+<h3><code>tweet</code> コマンド</h3>
+<p><a href="https://github.com/hato6502/tweet">GitHub: Hato6502/tweet</a></p>
+<p>コマンドラインからツイートします。標準入力から読み込む汎用的な作りにしたので、Git との連携以外にも応用できるかもしれません。</p>
+<pre class="prettyprint">
+$ echo "tweet コマンドのテストです。" | tweet
+</pre>
+<p>(1) /usr/local/src などにダウンロードします。</p>
+<pre class="prettyprint">
+# cd /usr/local/src
+# git clone https://github.com/Hato6502/tweet
+</pre>
+<p>(2) Composer で依存パッケージをインストールします。</p>
+<pre class="prettyprint">
+# cd tweet
+# composer install
+</pre>
+<p>(3) Twitter API の設定をします。</p>
+<pre class="prettyprint">
+# mv config.php.example config.php
+# nano config.php
+</pre>
+<p>(4) コマンドのシンボリックシンクを張ります。</p>
+<pre class="prettyprint">
+# cd /usr/local/bin
+# ln -s /usr/local/src/tweet/tweet
+</pre>
+<h3><code>gitwitter</code> コマンド</h3>
+<p><a href="https://gist.github.com/Hato6502/d3bb634ec9beb9443a040c90733284bd">Gist: Hato6502/gitwitter</a></p>
+<p>Git のコミットメッセージを収集してツイートし、<code>git push</code> します。直接 /usr/local/bin などに配置すればインストール完了です。push 先の URL などによって正常動作しない場合や、ツイート内容の調整をする場合は編集してください。引数を指定すると、そのまま <code>git push</code> の引数になります。</p>
+<p><script src="https://gist.github.com/Hato6502/d3bb634ec9beb9443a040c90733284bd.js"></script></p>
+<h2><code>git</code> コマンドを使いこなすための参考資料集</h2>
+<p>私自身 <code>git</code> コマンドは使いこなせていないのですが、今回のスクリプトを作るにあたって「まだリモートに push してないコミットを取得する方法」や「ログの出力形式を指定する方法」、「リポジトリ名ブランチ名ハッシュ値を取得する方法」などを調べました。<code>git</code> コマンドは<a href="https://qiita.com/t_nakayama0714/items/bfe4852e0535858ee662">シェル芸</a>しやすいのでぜひ参考にしてみてください。</p>
+<ul>
+<li><a href="https://salumarine.com/how-to-see-commits-not-pushed-to-the-origin-yet/">さるまりんのガレージ: gitでまだpushしていないcommitを確認する方法</a></li>
+<li><a href="https://qiita.com/harukasan/items/9149542584385e8dea75">Qiita: git logのフォーマットを指定する</a></li>
+<li><a href="https://qiita.com/zhao-xy/items/a35add58575ef7d9d4dc">Qiita: ロカールgitリポジトリでリモートのリポジトリURL確認方法</a></li>
+<li><a href="http://sugamasao.hatenablog.com/entry/2013/11/02/174311">すがブロ: gitで現在のブランチ名を取得する</a></li>
+<li><a href="https://qiita.com/quattro_4/items/55e99a2c008c6875f267">Qiita: gitでハッシュ値を取得</a></li>
+</ul>
+<h2>余談</h2>
+<p>当初 <code>gitweet</code> コマンドという名前にしようと思いましたが、同名の Web サービスが既にあったので <code>gitwitter</code> コマンドにしました 🙄</p>
+
+        <div id="social"></div>
+      </div>
+      <h3>この記事の執筆者</h3>
+      <div class="author">
+        <picture>
+          <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x">
+          <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502">
+        </picture>
+        <div>
+          <h4>hato6502
+            &emsp;<a href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-screen-name="false" data-show-count="false">Follow @bluehood_admin</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            
+          </h4>
+          <p>
+            中学生の頃に 6502 という CPU からプログラミングの世界に入りました。
+            C/C++ で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+    <footer>
+  <div>
+    2019 Hood<br>
+    <a href="https://github.com/blue-hood/apps" target=”_blank”>Published</a> under the MIT license. <br>
+    <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
+  </div>
+</footer>
+    <script src="/js/app.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://b-hood.site/js/social-button.js"></script>
+  </body>
+</html>

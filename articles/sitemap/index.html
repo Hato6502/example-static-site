@@ -1,0 +1,332 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106651880-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-106651880-2');
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script> (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-7008780049786244",
+    enable_page_level_ads: true
+    });
+    </script>
+
+      <meta charset="utf-8">
+<title>シェルで lastmod changefreq 付きの sitemap.xml を作る - Hood</title>
+ <meta name="description" content="Web サイトのクロールに大きな役割を持つ sitemap.xml を、シェルスクリプトで自動生成する方法を紹介します。"> <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@bluehood_admin">
+<meta property="og:url" content="https://b-hood.site/articles/sitemap/">
+<meta property="og:title" content="シェルで lastmod changefreq 付きの sitemap.xml を作る">
+ <meta property="og:description" content="Web サイトのクロールに大きな役割を持つ sitemap.xml を、シェルスクリプトで自動生成する方法を紹介します。"> <meta property="og:image" content="https://b-hood.site/storage/articles/images/a92fe036.jpg">
+
+<link rel="canonical" href="https://b-hood.site/articles/sitemap/">
+<link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32">
+<link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192">
+
+    <link href="/css/app.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
+  </head>
+  <body>
+    <nav>
+  <div>
+    <a href="https://b-hood.site/"><h1>Hood</h1></a>
+    <div class="nav-menu">
+      
+      <a href="https://b-hood.site/articles/">Articles</a>
+      <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
+      <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
+      <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
+    </div>
+    <div class="hamburger-button">Menu</div>
+  </div>
+</nav>
+      <article class="articles-show">
+    <div>
+      <div>2019-05-04</div>
+      <h1>シェルで lastmod changefreq 付きの sitemap.xml を作る</h1>
+      <div class="content">
+        <picture>
+  <source type="image/webp" srcset="/storage/articles/images/a92fe036.webp 1x,/storage/articles/images/90f383dd.webp 2x">
+  <img src="/storage/articles/images/a92fe036.jpg" srcset="/storage/articles/images/90f383dd.jpg 2x">
+</picture>
+<p>こんにちは、今回は内容の濃い記事が書けそうでワクワクしています😀　
+このサイトでは、PHP を使わず静的な html でコンテンツを配信しています。
+せっかく作っている Web サイト、この存在をクローラに気づかせるためには <strong>sitemap.xml</strong> の設置が重要となります。
+今回は、sitemap.xml を自動的かつ<strong>こだわりをもって(?)</strong>生成する方法を紹介します。</p>
+<p>このサイトの <a href="/sitemap.xml">sitemap.xml</a><br>
+2019/05/04　<strong>sitemap.xml を生成するコマンド</strong>を作りました！<a href="https://github.com/blue-hood/static-sitemap">GitHub</a></p>
+<ol class="table-of-contents"></ol>
+<h2>sitemap.xml の構造</h2>
+<p>sitemap.xml は、そのサイトのサイトマップを表す xml ファイルです。
+一般的にドキュメントルートに設置して、robots.txt で sitemap.xml の場所を指定します。</p>
+<p>robots.txt の例
+<pre class="prettyprint linenums">
+User-agent: *
+Sitemap: https://apps.bluehood.net/sitemap.xml
+</pre></p>
+<p>sitemap.xml はさらに別の xml ファイルに分割することもできるのですが、
+１ファイルにすべてのページの情報を書き込むとするとこのような形式になります。</p>
+<pre class="prettyprint linenums">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;&gt;
+	&lt;url&gt;
+    	&lt;loc&gt;https://apps.bluehood.net/&lt;/loc&gt;
+        &lt;lastmod&gt;2019-04-26T00:00:00+09:00&lt;/lastmod&gt;
+        &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+    &lt;/url&gt;
+	&lt;url&gt;
+    	&lt;loc&gt;https://apps.bluehood.net/articles/&lt;/loc&gt;
+    	&lt;lastmod&gt;2019-04-29T19:40:41+09:00&lt;/lastmod&gt;
+    	&lt;changefreq&gt;hourly&lt;/changefreq&gt;
+    &lt;/url&gt;
+    …
+&lt;/urlset&gt;
+</pre>
+<p><code>url</code> タグで１ページ分の情報として列記していきます。
+<code>url</code> タグ内の情報を以下のようにまとめました。</p>
+<ul>
+<li>loc: ページの URL(必須)</li>
+<li>lastmod: ページの最終更新日時(任意)</li>
+<li>changefreq: ページの更新頻度(任意、hourly, daily, weekly, monthly, yearly など)</li>
+<li>(priority): そのページの重要度(任意、今回は省略)</li>
+</ul>
+<p>最低限の sitemap.xml を作るのであれば、<code>loc</code> だけを書いて簡易的に済ませることもできます。
+しかし、できれば <code>lastmod</code> と <code>changefreq</code> も書いてサイトの情報を詳しく伝えたいところです。
+ちなみに <code>priority</code> はページの重要度を 0.0~1.0 の範囲内で指定できるのですが、<a href="https://www.suzukikenichi.com/blog/google-ignores-priority-but-uses-lastmod-in-sitemaps/">Google はこの値を無視</a>しているそうです。
+まあ、私としても <code>priority</code> は主観的であいまいなデータですし、あまりあてにならないかなと思います。
+もちろん全部のページを <code>priority=1.0</code> とかやっても意味がないですからね！</p>
+<p>sitemap.xml を手動で作成することもできるのですが、サイト更新のたびに修正するのも手間がかかります。
+そこで、シェルスクリプトを使って <code>loc</code> を書いていき、さらにこだわりとして <code>lastmod</code> と <code>changefreq</code> も書いてくれるプログラムを作りました。</p>
+<h2><code>lastmod</code> と <code>changefreq</code> 生成の仕組み</h2>
+<p>まず、<code>lastmod</code> と <code>changefreq</code> を生成するには、現在のサイトコンテンツだけでなく、その<strong>１つ前のバージョンのコンテンツ</strong>も必要になります。
+……たとえば、現在のサイトコンテンツが old ディレクトリ内に入っているとして、サイトを更新するときは <code>old</code> ディレクトリを <code>html</code> ディレクトリにコピーして作業するものとします。</p>
+<p>sitemap.xml を作成するときに、html ディレクトリ内の A.html と、old ディレクトリ内の A.html の比較をします。
+もしファイル間の差異があれば「そのページは更新した」と判断できます。
+そして、サイトを実際に更新したら、いまある old ディレクトリを削除して html ディレクトリが新たな old ディレクトリとなります。</p>
+<p>ここで、どのファイルにもタイムスタンプ（最終更新日時）を OS が記録しています。
+もし old/A.html と html/A.html が同じ内容であれば、old/A.html のタイムスタンプを html/A.html にコピーします。
+すると、A.html が更新されない限り、最終更新日時は old/A.html に保持され続けます。</p>
+<p><code>lastmod</code> は html/A.html のタイムスタンプをもとに生成するとして、<code>changefreq</code> は現在時刻と old/A.html の時間差から計算することにします。
+たとえば時間差が１時間以内であれば hourly、24時間以内であれば daily、……となります。</p>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-around; ">
+	<img style="width: 240px; margin: 2rem 1rem; " src="/storage/articles/images/f76f2676.svg">
+	<img style="width: 240px; margin: 2rem 1rem; " src="/storage/articles/images/31c2981a.svg">
+	<img style="width: 215px; margin: 2rem 1rem; " src="/storage/articles/images/002a8287.svg">
+</div>
+<h2>とりあえず完成形</h2>
+<p>今回は説明が難しくて長くなりそうなので、先に完成形のシェルスクリプトを貼らせてください🙇　
+ちなみにこのスクリプトは、<a href="https://github.com/blue-hood/apps/blob/master/crawl.sh">crawl.sh</a> としてこのサイトの運営にも組み込まれています。</p>
+<pre class="prettyprint linenums">
+#!/bin/bash
+
+# URL 先頭部分
+domain="https://apps.bluehood.net"
+
+# sitemap.xml 登録リストの生成
+sitemaps=`find html/ -name *.html`
+sitemaps=${sitemaps/html\/404.html/}
+sitemaps=${sitemaps/html\/50x.html/}
+
+# sitemap.xml の作成
+cat &lt;&lt; EOS &gt; html/sitemap.xml
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;&gt;
+EOS
+for path in ${sitemaps}
+do
+  page=${path#html/}
+  old=old/${page}
+  page=${page/index.html/}
+
+  # 変更チェック
+  if [ -e ${old} ]; then
+    prevmod=`date &quot;+%s&quot; -r ${old}`
+
+    if diff ${path} ${old} &gt; /dev/null 2&gt;&amp;1; then
+      # 変更なしの場合、古い更新日時を継承する
+      mv ${old} ${path}
+    fi
+  else
+    # 新規ファイルの場合、前回の更新時間は1970年1月1日とみなす
+    prevmod=0
+  fi
+
+  # &lt;loc&gt; の生成
+  loc=`echo &quot;${domain}/${page}&quot; | recode utf8..html`
+
+  # &lt;changefreq&gt; の生成
+  elapsed=$((`date &quot;+%s&quot;` - ${prevmod}))
+  if [ ${elapsed} -le $((60*60)) ];then
+    changefreq=&quot;hourly&quot;
+  elif [ ${elapsed} -le $((60*60*24)) ];then
+    changefreq=&quot;daily&quot;
+  elif [ ${elapsed} -le $((60*60*24*7)) ];then
+    changefreq=&quot;weekly&quot;
+  elif [ ${elapsed} -le $((60*60*24*28)) ];then
+    changefreq=&quot;monthly&quot;
+  else
+    changefreq=&quot;yearly&quot;
+  fi
+
+  # &lt;lastmod&gt; の生成
+  # W3C Datetime: https://www.w3.org/TR/NOTE-datetime
+  lastmod=`date &quot;+%Y-%m-%dT%H:%M:%S%:z&quot; -r ${path}`
+
+  # &lt;url&gt; の登録
+  echo &quot;&lt;url&gt;&lt;loc&gt;${loc}&lt;/loc&gt;&lt;lastmod&gt;${lastmod}&lt;/lastmod&gt;&lt;changefreq&gt;${changefreq}&lt;/changefreq&gt;&lt;/url&gt;&quot; &gt;&gt; html/sitemap.xml
+done
+echo &quot;&lt;/urlset&gt;&quot; &gt;&gt; html/sitemap.xml
+</pre>
+<p>今回のプログラムは長めですね。
+順を追って解説していきたいと思います。</p>
+<h3>sitemap.xml 登録リストの生成</h3>
+<pre class="prettyprint linenums">
+sitemaps=`find html/ -name *.html`
+sitemaps=${sitemaps/html\/404.html/}
+sitemaps=${sitemaps/html\/50x.html/}
+</pre>
+<p>まずは sitemap.xml に登録する html ファイルを <code>find</code> コマンドで取得します。
+その後、sitemap.xml に登録しないファイルを、<a href="https://qiita.com/bsdhack/items/597eb7daee4a8b3276ba">bash の変数展開</a>で除去しています。
+今回の例では、404.html と 50x.html を除去しています。</p>
+<h3>sitemap.xml のヘッダー書き込み</h3>
+<pre class="prettyprint linenums">
+cat &lt;&lt; EOS &gt; html/sitemap.xml
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;&gt;
+EOS
+</pre>
+<p><a href="https://qiita.com/take4s5i/items/e207cee4fb04385a9952">bash のヒアドキュメント</a>で sitemap.xml のヘッダーを書き込みます。
+注意点としては、<code>echo</code> コマンドではなく <code>cat</code> コマンドを使用しているところです。
+EOS で囲まれたヒアドキュメントは標準入力として扱われるため、<code>cat</code> コマンドで標準入力→標準出力に流してあげる必要があります。</p>
+<h3>各 html ファイルのループ処理</h3>
+<pre class="prettyprint linenums">
+for path in ${sitemaps}
+do
+  page=${path#html/}
+  old=old/${page}
+  page=${page/index.html/}
+
+  # 各 html ファイルのループ処理
+
+done
+</pre>
+<p>変数 <code>sitemaps</code> に各 html ファイルのパスが入っていますので、これを <code>for</code> 文でループ処理します。
+パスの先頭は必ず html/ から始まるため、これを除去して変数 <code>page</code> に入れています。
+そして、新たに old/ を先頭に付けて、１つ前のバージョンのパス <code>old</code> を作ります。
+また、sitemap.xml に登録するときは「index.html」を除去して URL を正規化することにします。</p>
+<h3>変更チェック</h3>
+<pre class="prettyprint linenums">
+  # 変更チェック
+  if [ -e ${old} ]; then
+    prevmod=`date &quot;+%s&quot; -r ${old}`
+
+    if diff ${path} ${old} &gt; /dev/null 2&gt;&amp;1; then
+      # 変更なしの場合、古い更新日時を継承する
+      mv ${old} ${path}
+    fi
+  else
+    # 新規ファイルの場合、前回の更新時間は1970年1月1日とみなす
+    prevmod=0
+  fi
+</pre>
+<p>html/ と old/ で html ファイルの変更があるかを判定します。
+まず、<code>if [ -e ${old} ];</code> で old/ の html ファイルがあるかを判定します。
+ない場合は<strong>新規ページ</strong>とみなせるため、前回の更新日時 <code>prevmod</code> を1970年1月1日にセットします。
+プログラムでは <code>prevmod=0</code> としていますが、これは時間を <a href="https://ja.wikipedia.org/wiki/UNIX%E6%99%82%E9%96%93">UNIX 時間</a>で扱っているためです。</p>
+<p>old/ の html ファイルが存在する場合は、<code>diff</code> コマンドでファイル内容の変更チェックをします。
+変更がない場合は、old/ の html ファイルを html/ に移動（上書き）することで、古い更新日時を継承します。
+<code>prevmod</code> は、<code>date</code> コマンドで old/ の html ファイルから取得します。</p>
+<p>この処理での出力は、前回の更新日時 <code>prevmod</code> と、html/ にある html ファイルの更新日時です。</p>
+<h3>&lt;loc&gt; の生成</h3>
+<pre class="prettyprint">
+  loc=`echo &quot;${domain}/${page}&quot; | recode utf8..html`
+</pre>
+<p>ドメイン名と html ファイルのパスをつなぎ合わせて loc タグを作ります。
+なお、sitemap.xml では &lt; や &gt; などの特殊文字をエンコードする必要があるため、<code>recode utf8..html</code> を挟んでいます。</p>
+<h3>&lt;changefreq&gt; の生成</h3>
+<pre class="prettyprint linenums">
+  # &lt;changefreq&gt; の生成
+  elapsed=$((`date &quot;+%s&quot;` - ${prevmod}))
+  if [ ${elapsed} -le $((60*60)) ];then
+    changefreq=&quot;hourly&quot;
+  elif [ ${elapsed} -le $((60*60*24)) ];then
+    changefreq=&quot;daily&quot;
+  elif [ ${elapsed} -le $((60*60*24*7)) ];then
+    changefreq=&quot;weekly&quot;
+  elif [ ${elapsed} -le $((60*60*24*28)) ];then
+    changefreq=&quot;monthly&quot;
+  else
+    changefreq=&quot;yearly&quot;
+  fi
+</pre>
+<p>前述の処理で求めた <code>prevmod</code> をもとに、更新頻度 <code>changefreq</code> を求めます。
+まずは <code>date &amp;quot;+%s&amp;quot;</code> で現在の UNIX 時間を取得し、<code>prevmod</code> と引き算をすることで経過時間 <code>elapsed</code> を計算します。
+<code>elapsed</code> は秒単位となりますが、これが 60x60=3600 秒、つまり1時間以内であれば <code>changefreq=&amp;quot;hourly&amp;quot;</code> としています。
+同様に daily、weekly、monthly、yearly の判定を <code>if</code> 文で記述していますが、monthly の判定は 28 日としました。</p>
+<h3>&lt;lastmod&gt; の生成</h3>
+<pre class="prettyprint linenums">
+  # &lt;lastmod&gt; の生成
+  # W3C Datetime: https://www.w3.org/TR/NOTE-datetime
+  lastmod=`date &quot;+%Y-%m-%dT%H:%M:%S%:z&quot; -r ${path}`
+</pre>
+<p>html/ にある html ファイルから lastmod を求めますが、sitemap.xml には <a href="https://www.w3.org/TR/NOTE-datetime">W3C Datetime</a>
+という形式で書き込む必要があります。細かい時分秒で出力するにはタイムゾーンの情報も必要になります。</p>
+<h3>最後に &lt;url&gt; を書き込んで完成</h3>
+<pre class="prettyprint linenums">
+  # &lt;url&gt; の登録
+  echo &quot;&lt;url&gt;&lt;loc&gt;${loc}&lt;/loc&gt;&lt;lastmod&gt;${lastmod}&lt;/lastmod&gt;&lt;changefreq&gt;${changefreq}&lt;/changefreq&gt;&lt;/url&gt;&quot; &gt;&gt; html/sitemap.xml
+done
+echo &quot;&lt;/urlset&gt;&quot; &gt;&gt; html/sitemap.xml
+</pre>
+<p>頑張って作った <code>loc</code>, <code>changefreq</code>, <code>lastmod</code> を <code>url</code> タグにまとめて sitemap.xml に追記します。
+そして、各 html ファイルのループ処理後にフッター <code>&lt;/urlset&gt;</code> を書き込めば完成です。</p>
+<h2>アルゴリズムでオリジナリティを出す</h2>
+<p>さらにこだわるとしたら、<code>priority</code> を計算するアルゴリズムを考えて実装するところでしょうか？
+これで、Google にもサイトの評価をしてもらえそうです。
+せっかく書いている記事、多くの人に見てもらいたいので🌿</p>
+<p>2019/05/04　sitemap.xml を生成するスクリプトをコマンド化しました。<a href="https://github.com/blue-hood/static-sitemap">GitHub</a></p>
+
+        <div id="social"></div>
+      </div>
+      <h3>この記事の執筆者</h3>
+      <div class="author">
+        <picture>
+          <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x">
+          <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502">
+        </picture>
+        <div>
+          <h4>hato6502
+            &emsp;<a href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-screen-name="false" data-show-count="false">Follow @bluehood_admin</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            
+          </h4>
+          <p>
+            中学生の頃に 6502 という CPU からプログラミングの世界に入りました。
+            C/C++ で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+    <footer>
+  <div>
+    2019 Hood<br>
+    <a href="https://github.com/blue-hood/apps" target=”_blank”>Published</a> under the MIT license. <br>
+    <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
+  </div>
+</footer>
+    <script src="/js/app.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://b-hood.site/js/social-button.js"></script>
+  </body>
+</html>
