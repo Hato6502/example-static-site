@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106651880-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-106651880-2');
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script> (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-7008780049786244",
+    enable_page_level_ads: true
+    });
+    </script>
+
+      <meta charset="utf-8">
+<title>マイコンを使わないアナログ式電子オルゴールを作った - Hood</title>
+ <meta name="description" content="デジタル全盛のいま、あえてマイコンを使わずアナログ感あふれる電子オルゴールを作りました。"> <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@bluehood_admin">
+<meta property="og:url" content="https://b-hood.site/articles/analog-orgel/">
+<meta property="og:title" content="マイコンを使わないアナログ式電子オルゴールを作った">
+ <meta property="og:description" content="デジタル全盛のいま、あえてマイコンを使わずアナログ感あふれる電子オルゴールを作りました。"> <meta property="og:image" content="https://b-hood.site/storage/articles/images/e7c0bb07.jpg">
+
+<link rel="canonical" href="https://b-hood.site/articles/analog-orgel/">
+<link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32">
+<link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192">
+
+    <link href="/css/app.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
+  </head>
+  <body>
+    <nav>
+  <div>
+    <a href="https://b-hood.site/"><h1>Hood</h1></a>
+    <div class="nav-menu">
+      
+      <a href="https://b-hood.site/articles/">Articles</a>
+      <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
+      <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
+      <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
+    </div>
+    <div class="hamburger-button">Menu</div>
+  </div>
+</nav>
+      <article class="articles-show">
+    <div>
+      <div>2019-06-17</div>
+      <h1>マイコンを使わないアナログ式電子オルゴールを作った</h1>
+      <div class="content">
+        <picture>
+  <source type="image/webp" srcset="/storage/articles/images/e7c0bb07.webp">
+  <img src="/storage/articles/images/e7c0bb07.jpg">
+</picture>
+<p>皆さんこんにちは。
+今回は、私が１年がかりで作った「アナログ式電子オルゴール」の紹介をしたいと思います。</p>
+<ol class="table-of-contents"></ol>
+<h2>動作風景</h2>
+<p>※音量小さいです。
+<blockquote class="twitter-tweet"><p lang="ja" dir="ltr">回路のまとめ作業が終わったので、次は3Dモデル編になります。 <a href="https://t.co/cWoV34qFTe">pic.twitter.com/cWoV34qFTe</a></p>&mdash; hata (@bluehood_admin) <a href="https://twitter.com/bluehood_admin/status/1139909993702948864?ref_src=twsrc%5Etfw">June 15, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+<h2>元ネタはピアノロール</h2>
+<p>私が中学生の頃、クラシックなミッキーマウスのアニメーションを見るのが好きだったのですが、そこに<a href="https://ja.wikipedia.org/wiki/%E3%83%94%E3%82%A2%E3%83%8E%E3%83%AD%E3%83%BC%E3%83%AB">ピアノロール</a>
+が出ていました。これは、ピアノの演奏情報を時系列的に記録した紙媒体であり、穴が空いているところに対応する鍵盤が自動的に押される仕組みのようです。</p>
+<p>これをもとに、幅 40 mm の紙テープで演奏データを記録することにしました。
+本家のピアノロールは、鍵盤１つずつに１ライン使うため非常に幅の広い紙テープが必要になります。
+そこで、音階（ドレミファソラシドと#）を４ビット、オクターブを３ビット、ノートオン/オフを１ビットの合計８ビットで表現しています。</p>
+<picture>
+  <source type="image/webp" srcset="/storage/articles/images/62859724.webp">
+  <img src="/storage/articles/images/62859724.jpg">
+</picture>
+<h2>回路図</h2>
+<p>画像形式と .CE3 形式で配布します。
+.CE3 を <a href="https://www.suigyodo.com/online/schsoft.htm">BSch3V</a> で開けば高解像で確認できるためおすすめします。
+なお、パスコンなどのノイズ対策や電源の振動対策を行っておらず、自己責任にてお願いいたします。</p>
+<h3>電源</h3>
+<p>15VのACアダプタからレールスプリッタで±7.5V電源を生成、プッシュプルで大電流対応。
+その他、NJM4580DDオペアンプの動作電圧を作ったり、デジタル用+5Vを三端子レギュレータで作っています。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/PowerSupply.CE3">CE3 ファイル</a>
+<img src="/storage/articles/images/df10230b.png"></li>
+</ul>
+<h3>紙テープ巻取回路</h3>
+<p>紙テープを一定の速度で巻き取ります。
+モーターの速度をフィードバックで制御していますが、なんと速度センサーもまたモーター。
+紙テープにローラーを当ててモーターの軸を回し、微弱な起電圧を300倍に増幅してフィードバックの基準電圧にします。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/TapeRoller.CE3">CE3 ファイル</a>
+<img src="/storage/articles/images/4d87a9a1.png"></li>
+</ul>
+<h3>紙テープ読取回路</h3>
+<p>8ビット幅の紙テープをフォトリフレクタで読み取ります。
+1ビットはノートオン信号として、これがHiのときに残りの7ビットを読み取るようにします。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/TapeReader.CE3">CE3 ファイル</a>
+<img src="/storage/articles/images/69b2f114.png"></li>
+</ul>
+<h3>音階デコーダ</h3>
+<p>音階信号（ドレミファソラシドと半音）からオクターブ４の周波数信号を生成します。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/ScaleDecoder.CE3">CE3 ファイル</a>
+<img src="/storage/articles/images/7742b6a2.png"></li>
+</ul>
+<h3>オクターブデコーダ</h3>
+<p>オクターブ４の周波数信号をもとに、オクターブ0~7に変調します。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/OctaveDecoder.CE3">CE3 ファイル</a>
+<img src="/storage/articles/images/63245516.png"></li>
+</ul>
+<h3>エンベロープ回路</h3>
+<p>音量を変化させて減衰を表現します。
+単純なコンデンサの充電放電と、分圧回路ですね。
+なお、コンデンサの急放電によるストレスは無視。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/Envelope.CE3">CE3 ファイル</a>
+<img src="/storage/articles/images/b4215aeb.png"></li>
+</ul>
+<h3>ノコギリ波VCO&amp;VCA</h3>
+<p>周波数と音量を電圧として入力するとノコギリ波が生成されます。
+周波数については入力電圧との線形性が成り立ちますが、振幅（音量）についてはJ-FETの特性の影響を受けます。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/SawWave.CE3">CE3 ファイル</a>
+<img src="/storage/articles/images/fcf3dc8e.png"></li>
+</ul>
+<h2>3Dモデル</h2>
+<p>紙テープ読取装置の 3D モデルです。
+3D プリンタで印刷し、接着剤で組み立てれば出来上がります。
+なお、.stl 形式と .rsdoc 形式で配布しますが、<a href="https://www.rs-online.com/designspark/mechanical-software-jp">DesignSpark Mechanical</a> 
+で .rsdoc を開けば印刷用に部品が分割されていますのでおすすめします。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/AnalogOrgel.rsdoc">紙テープ読取装置の .rsdoc ファイル</a></li>
+</ul>
+<h3>モーター用ロール</h3>
+<p>幅40mmの紙テープを130モーターとギアボックスで巻き取ります。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/Roll.stl">STL ファイル</a>
+<img src="/storage/articles/images/176f7440.png"></li>
+</ul>
+<h3>手巻き用ロール</h3>
+<p>こちらは手巻き用のノブがついています。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/Roll2.stl">STL ファイル</a>
+<img src="/storage/articles/images/77907bad.png"></li>
+</ul>
+<h3>ベース</h3>
+<p>手前から順に、ギアボックス、速度センサー、紙テープの土台です。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/Base.stl">STL ファイル</a>
+<img src="/storage/articles/images/4c4a9198.png"></li>
+</ul>
+<h3>ヘッド</h3>
+<p>格子１つにフォトリフレクタLBR-127HLDが２つ入ります。
+格子を４つ用意したので、８ビット分の並列データ読み込みができます。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/Head.stl">STL ファイル</a>
+<img src="/storage/articles/images/4d909bc4.png"></li>
+</ul>
+<h3>モーターホルダー</h3>
+<p>FA-130RAモーターを固定します。</p>
+<ul>
+<li><a href="/storage/articles/AnalogOrgel/MotorHolder.stl">STL ファイル</a>
+<img src="/storage/articles/images/d299a05c.png"></li>
+</ul>
+<h2>その他</h2>
+<p>その他市販のパーツの紹介です。
+<blockquote class="twitter-tweet"><p lang="ja" dir="ltr">アナログ式電子オルゴールのまとめ作業、既存品の紹介です。紙テープの巻き取りにはタミヤのシングルギヤボックス(<a href="https://t.co/w51rd8hAV2">https://t.co/w51rd8hAV2</a>)を使用しています。ギア比は一番低速の344.2:1です。その下には単3x2の電池ボックス(<a href="https://t.co/jKcs8ePmz0">https://t.co/jKcs8ePmz0</a>)を接着して高さを稼いでいます。 <a href="https://t.co/MswvqI2T0q">pic.twitter.com/MswvqI2T0q</a></p>&mdash; hata (@bluehood_admin) <a href="https://twitter.com/bluehood_admin/status/1140254877680984065?ref_src=twsrc%5Etfw">June 16, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet"><p lang="ja" dir="ltr">アナログ式電子オルゴールのまとめ作業、既存品の紹介２です。FA-130RAモーターにタイヤを付けてまさかの速度センサーにしています。タイヤはミニ四駆の小径ホイール(<a href="https://t.co/jbvedz7p5R">https://t.co/jbvedz7p5R</a>)に、ICの静電気保護用のスポンジを巻いて調整しています。 <a href="https://t.co/rxAOAp6Re0">pic.twitter.com/rxAOAp6Re0</a></p>&mdash; hata (@bluehood_admin) <a href="https://twitter.com/bluehood_admin/status/1140256469624819718?ref_src=twsrc%5Etfw">June 16, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet"><p lang="ja" dir="ltr">アナログ式電子オルゴールのまとめ作業、既存品の紹介３です。せっかくなのでイヤホン出力ではなく小型スピーカー(<a href="https://t.co/7R0spPkxYa">https://t.co/7R0spPkxYa</a>)にしました。アンプは簡単なキット(<a href="https://t.co/IoDVF4JGTF">https://t.co/IoDVF4JGTF</a>)、単3x2の電池ボックス(<a href="https://t.co/jKcs8ePmz0">https://t.co/jKcs8ePmz0</a>)。10kΩの抵抗を挟んで音量調整しています。 <a href="https://t.co/7lohz8iypP">pic.twitter.com/7lohz8iypP</a></p>&mdash; hata (@bluehood_admin) <a href="https://twitter.com/bluehood_admin/status/1140257922309447680?ref_src=twsrc%5Etfw">June 16, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+
+        <div id="social"></div>
+      </div>
+      <h3>この記事の執筆者</h3>
+      <div class="author">
+        <picture>
+          <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x">
+          <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502">
+        </picture>
+        <div>
+          <h4>hato
+            &emsp;<a href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-screen-name="false" data-show-count="false">Follow @bluehood_admin</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            
+          </h4>
+          <p>
+            中学生の頃に 6502 という CPU からプログラミングの世界に入りました。
+            C/C++ で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+    <footer>
+  <div>
+    2019 Hood<br>
+    <a href="https://github.com/blue-hood/apps" target=”_blank”>Published</a> under the MIT license. <br>
+    <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
+  </div>
+</footer>
+    <script src="/js/app.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://b-hood.site/js/social-button.js"></script>
+  </body>
+</html>
