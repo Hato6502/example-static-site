@@ -1,144 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106651880-2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-      gtag("config", "UA-106651880-2");
+      gtag('config', 'UA-106651880-2');
     </script>
 
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-7008780049786244",
-        enable_page_level_ads: true
-      });
+    <script> (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-7008780049786244",
+    enable_page_level_ads: true
+    });
     </script>
 
-    <meta charset="utf-8" />
-    <title>ImageMagick で 16:9 トリミングを自動化 - Hood</title>
-    <meta
-      name="description"
-      content="画像編集のなかでも頻度が高いと思われる「16:9 トリミング」を自動化し、作業効率アップを図る方法を紹介します。"
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta charset="utf-8">
+<title>ImageMagick で 16:9 トリミングを自動化 - Hood</title>
+ <meta name="description" content="画像編集のなかでも頻度が高いと思われる「16:9 トリミング」を自動化し、作業効率アップを図る方法を紹介します。"> <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@bluehood_admin" />
-    <meta property="og:url" content="https://b-hood.site/articles/trimrate/" />
-    <meta property="og:title" content="ImageMagick で 16:9 トリミングを自動化" />
-    <meta
-      property="og:description"
-      content="画像編集のなかでも頻度が高いと思われる「16:9 トリミング」を自動化し、作業効率アップを図る方法を紹介します。"
-    />
-    <meta property="og:image" content="https://b-hood.site/storage/articles/images/1814cc87.jpg" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@bluehood_admin">
+<meta property="og:url" content="https://b-hood.site/articles/trimrate/">
+<meta property="og:title" content="ImageMagick で 16:9 トリミングを自動化">
+ <meta property="og:description" content="画像編集のなかでも頻度が高いと思われる「16:9 トリミング」を自動化し、作業効率アップを図る方法を紹介します。"> <meta property="og:image" content="https://b-hood.site/storage/articles/images/1814cc87.jpg">
 
-    <link rel="canonical" href="https://b-hood.site/articles/trimrate/" />
-    <link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32" />
-    <link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192" />
+<link rel="canonical" href="https://b-hood.site/articles/trimrate/">
+<link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32">
+<link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192">
 
-    <link href="/css/app.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
+    <link href="/css/app.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
   </head>
   <body>
     <nav>
-      <div>
-        <a href="https://b-hood.site/"><h1>Hood</h1></a>
-        <div class="nav-menu">
-          <a href="https://b-hood.site/articles/">Articles</a>
-          <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
-          <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
-          <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
-        </div>
-        <div class="hamburger-button">Menu</div>
-      </div>
-    </nav>
-    <article class="articles-show">
-      <div>
-        <div>2019-04-29</div>
-        <h1>ImageMagick で 16:9 トリミングを自動化</h1>
-        <div class="content">
-          <picture>
-            <source
-              type="image/webp"
-              srcset="/storage/articles/images/1814cc87.webp 1x, /storage/articles/images/21c8af6c.webp 2x"
-            />
-            <img src="/storage/articles/images/1814cc87.jpg" srcset="/storage/articles/images/21c8af6c.jpg 2x" />
-          </picture>
-          <p>
-            皆さんは画像を SNS や自身のブログなどに投稿する際に加工したことはないでしょうか？ Twitter では画像が自動的に
-            16:9 で表示されるため、予め 16:9 でトリミングしておくことでどのように表示されるかを調整できます。
-            トリミング機能は Android 版にはありますが Web 版にはないため、PC
-            からの画像投稿のときに少し面倒に感じたりします。
-          </p>
-          <ol class="table-of-contents"></ol>
-          <h2>画像編集の自動化といえば ImageMagick</h2>
-          <p>
-            そこで GIMP などの画像編集ソフトが必要になりますが、私は ImageMagick を利用しています。
-            画像の加工を自動で行うためのコマンドラインが用意されており、例えば以下のようにすれば png
-            ファイルを一括で余白トリミングできます。 GIMP でいう「最小枠で切り抜き」機能ですね。
-          </p>
-          <pre class="prettyprint">
+  <div>
+    <a href="https://b-hood.site/"><h1>Hood</h1></a>
+    <div class="nav-menu">
+      
+      <a href="https://b-hood.site/articles/">Articles</a>
+      <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
+      <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
+      <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
+    </div>
+    <div class="hamburger-button">Menu</div>
+  </div>
+</nav>
+      <article class="articles-show">
+    <div>
+      <div>2019-04-29</div>
+      <h1>ImageMagick で 16:9 トリミングを自動化</h1>
+      <div class="content">
+        <picture>
+  <source type="image/webp" srcset="/storage/articles/images/1814cc87.webp 1x, /storage/articles/images/21c8af6c.webp 2x">
+  <img src="/storage/articles/images/1814cc87.jpg" srcset="/storage/articles/images/21c8af6c.jpg 2x">
+</picture>
+<p>皆さんは画像を SNS や自身のブログなどに投稿する際に加工したことはないでしょうか？
+Twitter では画像が自動的に 16:9 で表示されるため、予め 16:9 でトリミングしておくことでどのように表示されるかを調整できます。
+トリミング機能は Android 版にはありますが Web 版にはないため、PC からの画像投稿のときに少し面倒に感じたりします。</p>
+<ol class="table-of-contents"></ol>
+<h2>画像編集の自動化といえば ImageMagick</h2>
+<p>そこで GIMP などの画像編集ソフトが必要になりますが、私は ImageMagick を利用しています。
+画像の加工を自動で行うためのコマンドラインが用意されており、例えば以下のようにすれば png ファイルを一括で余白トリミングできます。
+GIMP でいう「最小枠で切り抜き」機能ですね。</p>
+<pre class="prettyprint">
 $ mogrify -trim *.png
-</pre
-          >
-          <p>
-            画像サイズを指定しての切り抜きは ImageMagick の <code>crop</code> オプションを使います。 座標
-            (<code>X</code>, <code>Y</code>) の位置で幅 <code>W</code> px、高さ <code>H</code> px
-            のトリミングをするには以下のコマンドを打ちます。
-          </p>
-          <pre class="prettyprint">
+</pre>
+<p>画像サイズを指定しての切り抜きは ImageMagick の <code>crop</code> オプションを使います。
+座標 (<code>X</code>, <code>Y</code>) の位置で幅 <code>W</code> px、高さ <code>H</code> px のトリミングをするには以下のコマンドを打ちます。</p>
+<pre class="prettyprint">
 $ convert (元ファイル) -crop WxH+X+Y (出力パス)
-</pre
-          >
-          <p>
-            しかし、残念ながら比率 (16:9 など) の指定によるトリミングには対応していません。
-            そこで、比率指定によるトリミングのコマンドをシェルスクリプトで作りました。
-          </p>
-          <h2><code>trimrate</code> コマンドを作ってみた</h2>
-          <p>結論から言うと、比率指定によるトリミングコマンドを以下のように作りました。</p>
-          <p><script src="https://gist.github.com/Hato6502/dc46fd6108301ed9106da67db6768ec9.js"></script></p>
-          <p>
-            このシェルスクリプトを <code>trimrate</code> というファイル名で保存します。 保存先は
-            <code>/usr/local/bin</code> などのパスが通ってるところが便利です。 そして
-            <code>chmod +x trimrate</code> で実行権限を与えて以下の構文でトリミングを行います。
-          </p>
-          <pre class="prettyprint">
+</pre>
+<p>しかし、残念ながら比率 (16:9 など) の指定によるトリミングには対応していません。
+そこで、比率指定によるトリミングのコマンドをシェルスクリプトで作りました。</p>
+<h2><code>trimrate</code> コマンドを作ってみた</h2>
+<p>結論から言うと、比率指定によるトリミングコマンドを以下のように作りました。</p>
+<p><script src="https://gist.github.com/Hato6502/dc46fd6108301ed9106da67db6768ec9.js"></script></p>
+<p>このシェルスクリプトを <code>trimrate</code> というファイル名で保存します。
+保存先は <code>/usr/local/bin</code> などのパスが通ってるところが便利です。
+そして <code>chmod +x trimrate</code> で実行権限を与えて以下の構文でトリミングを行います。</p>
+<pre class="prettyprint">
 $ trimrate (元ファイル) (幅比率) (高さ比率) (X オフセット) (Y オフセット) (出力パス) [(ImageMagick オプション)]
 $ trimrate src.jpg 16 9 0 0 dest.jpg -gravity center (←こんな感じ)
-</pre
-          >
-          <p>
-            コマンドの動作的には、比率から切り抜きの幅高さを計算して ImageMagick の
-            <code>crop</code> 機能を呼び出しているだけです。 デフォルトだと画像の上部でトリミングするため、<code
-              >-gravity center</code
-            >
-            オプションを加えて中央でトリミングしています。
-          </p>
-          <h2><code>for</code> 文で一括処理する</h2>
-          <p>
-            <code>trimrate</code> コマンドだけだと
-            <code>mogrify</code> のように複数のファイルを一括処理することができません。 しかし、<code>bash</code> の
-            <code>for</code> 文で画像ファイルごとに <code>trimrate</code> を実行して一括処理させることはできます。
-          </p>
-          <pre class="prettyprint">
+</pre>
+<p>コマンドの動作的には、比率から切り抜きの幅高さを計算して ImageMagick の <code>crop</code> 機能を呼び出しているだけです。
+デフォルトだと画像の上部でトリミングするため、<code>-gravity center</code> オプションを加えて中央でトリミングしています。</p>
+<h2><code>for</code> 文で一括処理する</h2>
+<p><code>trimrate</code> コマンドだけだと <code>mogrify</code> のように複数のファイルを一括処理することができません。
+しかし、<code>bash</code> の <code>for</code> 文で画像ファイルごとに <code>trimrate</code> を実行して一括処理させることはできます。</p>
+<pre class="prettyprint">
 $ mkdir 16-9
 $ for file in `ls *.jpg`; do trimrate ${file} 16 9 0 0 16-9/${file} -gravity center; done
-</pre
-          >
-          <p>
-            やってることは、<code>16-9</code> という名前でディレクトリを作り、<code>ls *.jpg</code> と
-            <code>for</code> 文で jpg ファイルのループ処理をしています。
-            <code>identify</code> コマンドでトリミング前後の画像ファイルを確認すると、
-          </p>
-          <pre class="prettyprint">
+</pre>
+<p>やってることは、<code>16-9</code> という名前でディレクトリを作り、<code>ls *.jpg</code> と <code>for</code> 文で jpg ファイルのループ処理をしています。
+<code>identify</code> コマンドでトリミング前後の画像ファイルを確認すると、</p>
+<pre class="prettyprint">
 $ identify *.jpg  (トリミング前)
 publicdomainq-0029161ayicpk.jpg JPEG 3491x2410 3491x2410+0+0 8-bit sRGB 1.476MB 0.030u 0:00.020
 publicdomainq-0029407uhs.jpg JPEG 900x675 900x675+0+0 8-bit sRGB 111KB 0.010u 0:00.009
@@ -153,70 +113,56 @@ $ identify 16-9/*.jpg  (トリミング後)
 16-9/publicdomainq-0031794ftclzr.jpg JPEG 5184x2916 5184x2916+0+0 8-bit sRGB 5.783MB 0.000u 0:00.000
 16-9/publicdomainq-0031795pgepte.jpg JPEG 5472x3078 5472x3078+0+0 8-bit sRGB 5.342MB 0.000u 0:00.000
 16-9/publicdomainq-0033354fvanhv.jpg JPEG 4752x2673 4752x2673+0+0 8-bit sRGB 5.354MB 0.010u 0:00.000
-</pre
-          >
-          <p>
-            このとおり 16:9 になっています。
-            <code>display</code> コマンドで中身を確認すると、ちゃんと中央でのトリミングになっていました。
-          </p>
-          <p>
-            トリミング前
-            <picture>
-              <source type="image/webp" srcset="/storage/articles/images/1d1900bc.webp 1x" />
-              <img src="/storage/articles/images/1d1900bc.png" alt="トリミング前" />
-            </picture>
-          </p>
-          <p>
-            トリミング後
-            <picture>
-              <source type="image/webp" srcset="/storage/articles/images/c355feaf.webp 1x" />
-              <img src="/storage/articles/images/c355feaf.png" alt="トリミング後" />
-            </picture>
-          </p>
-          <h2>作業効率化で差をつけよう</h2>
-          <p>
-            デスクワークでは画像の編集もよくあることだと思いますが、コマンドによる作業効率化はあまり知られていないように感じます。
-            ドキュメントであれば文字の置換など作業効率化のイメージがつきますが、画像になると人手でやるしかない、と思われる方も多いと思います。
-            （私の前職ではまさかのペイントしか使えない環境だったので……）
-            ぜひ、画像においても作業効率化が普及することを願います。
-          </p>
+</pre>
+<p>このとおり 16:9 になっています。
+<code>display</code> コマンドで中身を確認すると、ちゃんと中央でのトリミングになっていました。</p>
+<p>トリミング前
+<picture>
+  <source type="image/webp" srcset="/storage/articles/images/1d1900bc.webp 1x">
+  <img src="/storage/articles/images/1d1900bc.png" alt="トリミング前">
+</picture></p>
+<p>トリミング後
+<picture>
+  <source type="image/webp" srcset="/storage/articles/images/c355feaf.webp 1x">
+  <img src="/storage/articles/images/c355feaf.png" alt="トリミング後">
+</picture></p>
+<h2>作業効率化で差をつけよう</h2>
+<p>デスクワークでは画像の編集もよくあることだと思いますが、コマンドによる作業効率化はあまり知られていないように感じます。
+ドキュメントであれば文字の置換など作業効率化のイメージがつきますが、画像になると人手でやるしかない、と思われる方も多いと思います。
+（私の前職ではまさかのペイントしか使えない環境だったので……）
+ぜひ、画像においても作業効率化が普及することを願います。</p>
 
-          <div id="social"></div>
-        </div>
-        <h3>この記事の執筆者</h3>
-        <div class="author">
-          <picture>
-            <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x" />
-            <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502" />
-          </picture>
-          <div>
-            <h4>
-              hato &emsp;<a
-                href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw"
-                class="twitter-follow-button"
-                data-show-screen-name="false"
-                data-show-count="false"
-                >Follow @bluehood_admin</a
-              ><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-            </h4>
-            <p>
-              中学生の頃に 6502 という CPU からプログラミングの世界に入りました。 C/C++
-              で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
-            </p>
-          </div>
+        <div id="social"></div>
+      </div>
+      <h3>この記事の執筆者</h3>
+      <div class="author">
+        <picture>
+          <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x">
+          <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502">
+        </picture>
+        <div>
+          <h4>hato
+            &emsp;<a href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-screen-name="false" data-show-count="false">Follow @bluehood_admin</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            
+          </h4>
+          <p>
+            中学生の頃に 6502 という CPU からプログラミングの世界に入りました。
+            C/C++ で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
+          </p>
         </div>
       </div>
-    </article>
+    </div>
+  </article>
 
     <footer>
-      <div>
-        2019 Hood<br />
-        <a href="https://github.com/blue-hood/apps" target="”_blank”">Published</a> under the MIT license. <br />
-        <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
-      </div>
-    </footer>
+  <div>
+    2019 Hood<br>
+    <a href="https://github.com/blue-hood/apps" target=”_blank”>Published</a> under the MIT license. <br>
+    <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
+  </div>
+</footer>
     <script src="/js/app.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
-    <script src="https://b-hood.site/js/social-button.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://b-hood.site/js/social-button.js"></script>
   </body>
 </html>

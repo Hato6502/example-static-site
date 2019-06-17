@@ -1,103 +1,84 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106651880-2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-      gtag("config", "UA-106651880-2");
+      gtag('config', 'UA-106651880-2');
     </script>
 
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-7008780049786244",
-        enable_page_level_ads: true
-      });
+    <script> (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-7008780049786244",
+    enable_page_level_ads: true
+    });
     </script>
 
-    <meta charset="utf-8" />
-    <title>面倒なファイル名は付けずに8文字IDで管理しよう - Hood</title>
-    <meta
-      name="description"
-      content="特にファイル名をつける必要がないときは、自動で8文字IDに置き換えて管理しやすくする方法を紹介します。"
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta charset="utf-8">
+<title>面倒なファイル名は付けずに8文字IDで管理しよう - Hood</title>
+ <meta name="description" content="特にファイル名をつける必要がないときは、自動で8文字IDに置き換えて管理しやすくする方法を紹介します。"> <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@bluehood_admin" />
-    <meta property="og:url" content="https://b-hood.site/articles/mvhash/" />
-    <meta property="og:title" content="面倒なファイル名は付けずに8文字IDで管理しよう" />
-    <meta
-      property="og:description"
-      content="特にファイル名をつける必要がないときは、自動で8文字IDに置き換えて管理しやすくする方法を紹介します。"
-    />
-    <meta property="og:image" content="https://b-hood.site/storage/articles/images/7c38fe6d.jpg" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@bluehood_admin">
+<meta property="og:url" content="https://b-hood.site/articles/mvhash/">
+<meta property="og:title" content="面倒なファイル名は付けずに8文字IDで管理しよう">
+ <meta property="og:description" content="特にファイル名をつける必要がないときは、自動で8文字IDに置き換えて管理しやすくする方法を紹介します。"> <meta property="og:image" content="https://b-hood.site/storage/articles/images/7c38fe6d.jpg">
 
-    <link rel="canonical" href="https://b-hood.site/articles/mvhash/" />
-    <link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32" />
-    <link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192" />
+<link rel="canonical" href="https://b-hood.site/articles/mvhash/">
+<link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32">
+<link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192">
 
-    <link href="/css/app.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
+    <link href="/css/app.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
   </head>
   <body>
     <nav>
-      <div>
-        <a href="https://b-hood.site/"><h1>Hood</h1></a>
-        <div class="nav-menu">
-          <a href="https://b-hood.site/articles/">Articles</a>
-          <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
-          <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
-          <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
-        </div>
-        <div class="hamburger-button">Menu</div>
-      </div>
-    </nav>
-    <article class="articles-show">
-      <div>
-        <div>2019-04-29</div>
-        <h1>面倒なファイル名は付けずに8文字IDで管理しよう</h1>
-        <div class="content">
-          <picture>
-            <source
-              type="image/webp"
-              srcset="/storage/articles/images/7c38fe6d.webp 1x, /storage/articles/images/45e49d86.webp 2x"
-            />
-            <img src="/storage/articles/images/7c38fe6d.jpg" srcset="/storage/articles/images/45e49d86.jpg 2x" />
-          </picture>
-          <p>みなさんはこんな感じのファイル管理を見たことはないでしょうか？</p>
-          <ul>
-            <li>レイアウト_トップ画面.xlsx</li>
-            <li>レイアウト_登録画面.xlsx</li>
-            <li>レイアウト_トップ画面_20190101提出版.xlsx</li>
-            <li>レイアウト_登録画面_20190101提出版.xlsx</li>
-          </ul>
-          <p>
-            バージョン管理システムが導入されていないオフィスにいたとき、作業用PCの作業ディレクトリ内がこんな感じでした（笑）。
-            ちなみにいまはバージョン管理システムが導入されており、少し作業効率が改善されたのを覚えています。
-            とはいっても、バージョン管理システムもその人の使い方次第で↑のような状況になってしまうのですが……
-          </p>
-          <p>
-            Web サイトやプレゼンテーション資料を作るときなど、画像素材をいろんなところから収集してくるときがあります。
-            すると、ファイル名は「猫の画像1.jpg」、「ScreenShot20190101-1.png」、「12de944eff….jpg」など、ファイル名の規則性がバラバラで意味を成さなくなります。
-            そんなときに、ファイル名を<strong>8文字ID</strong>に一括で置き換えて統一する方法を紹介します。
-          </p>
-          <ol class="table-of-contents"></ol>
-          <h2><code>mvhash</code> コマンドを作ってみた</h2>
-          <p>Linux や Mac をお使いであれば、以下のシェルスクリプトを導入すれば8文字IDに変換できるようになります。</p>
-          <p><script src="https://gist.github.com/Hato6502/9ebb9a6ce2863e9498a5ebea3a3f5c6c.js"></script></p>
-          <p>
-            上記シェルスクリプトを <code>mvhash</code> というファイル名で /usr/localbin
-            などのパスが通っているところに配置します。 そして、以下のようにすれば8文字IDに変換されます。
-          </p>
-          <pre class="prettyprint">
+  <div>
+    <a href="https://b-hood.site/"><h1>Hood</h1></a>
+    <div class="nav-menu">
+      
+      <a href="https://b-hood.site/articles/">Articles</a>
+      <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
+      <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
+      <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
+    </div>
+    <div class="hamburger-button">Menu</div>
+  </div>
+</nav>
+      <article class="articles-show">
+    <div>
+      <div>2019-04-29</div>
+      <h1>面倒なファイル名は付けずに8文字IDで管理しよう</h1>
+      <div class="content">
+        <picture>
+  <source type="image/webp" srcset="/storage/articles/images/7c38fe6d.webp 1x,/storage/articles/images/45e49d86.webp 2x">
+  <img src="/storage/articles/images/7c38fe6d.jpg" srcset="/storage/articles/images/45e49d86.jpg 2x">
+</picture>
+<p>みなさんはこんな感じのファイル管理を見たことはないでしょうか？</p>
+<ul>
+<li>レイアウト_トップ画面.xlsx</li>
+<li>レイアウト_登録画面.xlsx</li>
+<li>レイアウト_トップ画面_20190101提出版.xlsx</li>
+<li>レイアウト_登録画面_20190101提出版.xlsx</li>
+</ul>
+<p>バージョン管理システムが導入されていないオフィスにいたとき、作業用PCの作業ディレクトリ内がこんな感じでした（笑）。
+ちなみにいまはバージョン管理システムが導入されており、少し作業効率が改善されたのを覚えています。
+とはいっても、バージョン管理システムもその人の使い方次第で↑のような状況になってしまうのですが……</p>
+<p>Web サイトやプレゼンテーション資料を作るときなど、画像素材をいろんなところから収集してくるときがあります。
+すると、ファイル名は「猫の画像1.jpg」、「ScreenShot20190101-1.png」、「12de944eff….jpg」など、ファイル名の規則性がバラバラで意味を成さなくなります。
+そんなときに、ファイル名を<strong>8文字ID</strong>に一括で置き換えて統一する方法を紹介します。</p>
+<ol class="table-of-contents"></ol>
+<h2><code>mvhash</code> コマンドを作ってみた</h2>
+<p>Linux や Mac をお使いであれば、以下のシェルスクリプトを導入すれば8文字IDに変換できるようになります。</p>
+<p><script src="https://gist.github.com/Hato6502/9ebb9a6ce2863e9498a5ebea3a3f5c6c.js"></script></p>
+<p>上記シェルスクリプトを <code>mvhash</code> というファイル名で /usr/localbin などのパスが通っているところに配置します。
+そして、以下のようにすれば8文字IDに変換されます。</p>
+<pre class="prettyprint">
 $ ls
   82f231898694e893389f7fc7f0d4b2ae1ddfb69ed2d59295603593c8529db673.jpg
   ScreenShot20190101-1.png
@@ -110,29 +91,22 @@ $ mvhash *.jpg *.png
 
 $ ls
   9018ac4f.jpg  9ee84598.png  fff32890.jpg
-</pre
-          >
-          <p>せっかくなので、<code>mvhash</code> コマンドの解説をしていきたいと思います！💪</p>
-          <h3>コマンド引数で <code>while</code> ループ</h3>
-          <pre class="prettyprint linenums">
+</pre>
+<p>せっかくなので、<code>mvhash</code> コマンドの解説をしていきたいと思います！💪</p>
+<h3>コマンド引数で <code>while</code> ループ</h3>
+<pre class="prettyprint linenums">
 while [ $# -ne 0 ]
 do
   # $1 を使った処理
   shift
 done
-</pre
-          >
-          <p>
-            <code>$ mvhash *.jpg *.png</code> のようにワイルドカードを使ったコマンドを実行するとき、bash
-            がワイルドカードの展開をして
-            <code>$ mvhash 猫の画像1.jpg ScreenShot20190101-1.png 82f23189….jpg</code>
-            というコマンドを入力したとみなされます。 よって、<code>mvhash</code>
-            シェルスクリプトでは、与えられたコマンドライン引数ごとにループ処理をすることになります。
-            <code>while</code> 文のループ条件は「引数が0でないとき」とし、<code>shift</code>
-            コマンドによって<strong>引数のシフト</strong>というものをします。 これによって第一引数
-            <code>$1</code> が削除され、そのあとに続く引数が <code>$1</code>、<code>$2</code>、…となります。
-          </p>
-          <pre class="prettyprint linenums">
+</pre>
+<p><code>$ mvhash *.jpg *.png</code> のようにワイルドカードを使ったコマンドを実行するとき、bash がワイルドカードの展開をして
+<code>$ mvhash 猫の画像1.jpg ScreenShot20190101-1.png 82f23189….jpg</code> というコマンドを入力したとみなされます。
+よって、<code>mvhash</code> シェルスクリプトでは、与えられたコマンドライン引数ごとにループ処理をすることになります。
+<code>while</code> 文のループ条件は「引数が0でないとき」とし、<code>shift</code> コマンドによって<strong>引数のシフト</strong>というものをします。
+これによって第一引数 <code>$1</code> が削除され、そのあとに続く引数が <code>$1</code>、<code>$2</code>、…となります。</p>
+<pre class="prettyprint linenums">
 $ mvhash 猫の画像1.jpg ScreenShot20190101-1.png 82f23189….jpg  (引数3つ)
 ↓shift
 $ mvhash ScreenShot20190101-1.png 82f23189….jpg  (引数2つ)
@@ -140,99 +114,77 @@ $ mvhash ScreenShot20190101-1.png 82f23189….jpg  (引数2つ)
 $ mvhash 82f23189….jpg  (引数1つ)
 ↓shift
 $ mvhash  (引数0つのためループ終了)
-</pre
-          >
-          <p>よって、<code>while</code> ループの中で <code>$1</code> を使った処理を書けばよいということになります。</p>
-          <h3>すでに8文字ID化されている場合はスキップ</h3>
-          <pre class="prettyprint linenums">
+</pre>
+<p>よって、<code>while</code> ループの中で <code>$1</code> を使った処理を書けばよいということになります。</p>
+<h3>すでに8文字ID化されている場合はスキップ</h3>
+<pre class="prettyprint linenums">
 if [[ $1 =~ ^[0-9a-f]{8}\. ]];  then
   shift
   continue
 fi
-</pre
-          >
-          <p>
-            ファイル名を8文字ID化するために
-            <a href="https://ja.wikipedia.org/wiki/%E5%B7%A1%E5%9B%9E%E5%86%97%E9%95%B7%E6%A4%9C%E6%9F%BB">crc32</a>
-            というハッシュアルゴリズムを使用するため（後述）、ID は 0~9とa~f の文字を使った8文字となります。
-            そして、8文字IDをさらに8文字ID化することができてしまうため、これを防ぐためにスキップ処理を入れています。
-            <code>if [[ $1 =~ ^[0-9a-f]{8}\. ]]</code> によって、与えられたファイル名がすでに8文字IDであるかを
-            <a href="https://ja.wikipedia.org/wiki/%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE">正規表現マッチ</a
-            >して条件分岐します。
-          </p>
-          <h3><code>crc32</code> で8文字IDを生成</h3>
-          <pre class="prettyprint">
+</pre>
+<p>ファイル名を8文字ID化するために <a href="https://ja.wikipedia.org/wiki/%E5%B7%A1%E5%9B%9E%E5%86%97%E9%95%B7%E6%A4%9C%E6%9F%BB">crc32</a> 
+というハッシュアルゴリズムを使用するため（後述）、ID は 0~9とa~f の文字を使った8文字となります。
+そして、8文字IDをさらに8文字ID化することができてしまうため、これを防ぐためにスキップ処理を入れています。
+<code>if [[ $1 =~ ^[0-9a-f]{8}\. ]]</code> によって、与えられたファイル名がすでに8文字IDであるかを
+<a href="https://ja.wikipedia.org/wiki/%E6%AD%A3%E8%A6%8F%E8%A1%A8%E7%8F%BE">正規表現マッチ</a>して条件分岐します。</p>
+<h3><code>crc32</code> で8文字IDを生成</h3>
+<pre class="prettyprint">
 hashed=`crc32 <(echo $1)`.${1##*.}
 echo $1' -> '${hashed}
 mv -i "$1" "${hashed}"
 shift
-</pre
-          >
-          <p>
-            <code>crc32</code> コマンドは、指定したファイルの<strong>内容</strong>をもとに crc32
-            ハッシュを出力するコマンドです。 しかし、今回は指定したファイルの<strong>名前</strong>をもとに crc32
-            ハッシュを取得したいと思います。 そこで、bash の
-            <a href="http://fj.hatenablog.jp/entry/2016/03/06/170907"><code>&lt;()</code></a> という構文を使います。
-            これは、() 内に書いたコマンドによる標準出力を一時的なファイルとして展開する……というものです。
-          </p>
-          <p>
-            なかなか説明が難しいのでデバッグ出力をしてみました。 下記の <code>/dev/fd/63</code> に注目してください。
-            <code>/dev/fd/63</code> という仮想的なファイルには、<code>echo test.png</code>
-            による標準出力、つまり「test.png」という文字列が書き込まれています。 これを
-            <code>crc32</code> コマンドに送ることで、test.png の中身ではなくファイル名をもとに crc32
-            ハッシュを生成しています。
-          </p>
-          <pre class="prettyprint">
+</pre>
+<p><code>crc32</code> コマンドは、指定したファイルの<strong>内容</strong>をもとに crc32 ハッシュを出力するコマンドです。
+しかし、今回は指定したファイルの<strong>名前</strong>をもとに crc32 ハッシュを取得したいと思います。
+そこで、bash の <a href="http://fj.hatenablog.jp/entry/2016/03/06/170907"><code>&lt;()</code></a> という構文を使います。
+これは、() 内に書いたコマンドによる標準出力を一時的なファイルとして展開する……というものです。</p>
+<p>なかなか説明が難しいのでデバッグ出力をしてみました。
+下記の <code>/dev/fd/63</code> に注目してください。
+<code>/dev/fd/63</code> という仮想的なファイルには、<code>echo test.png</code> による標準出力、つまり「test.png」という文字列が書き込まれています。
+これを <code>crc32</code> コマンドに送ることで、test.png の中身ではなくファイル名をもとに crc32 ハッシュを生成しています。</p>
+<pre class="prettyprint">
 $ echo crc32 <(echo test.png)
   crc32 /dev/fd/63
-</pre
-          >
-          <h2>(余談)「8文字」IDにした理由</h2>
-          <p>
-            今回はファイル名を8文字のIDに置き換えましたが、当方<strong>ファイル名は8文字！</strong>という謎のこだわりを持っています😤　
-            というのは、だいぶ前にファイル名が8文字までしか使えない OS があったからです。 その名残からか、Linux
-            のコマンド名も伝統的なものは8文字以内に収まっているような気がします。 とはいえさすがにもう 2019 年、<code
-              >docker-compose</code
-            >
-            のように長いコマンド名も普通だし、 無理やり8文字に収めようとすると直感的でなくなってしまう問題点もあります。
-          </p>
+</pre>
+<h2>(余談)「8文字」IDにした理由</h2>
+<p>今回はファイル名を8文字のIDに置き換えましたが、当方<strong>ファイル名は8文字！</strong>という謎のこだわりを持っています😤　
+というのは、だいぶ前にファイル名が8文字までしか使えない OS があったからです。
+その名残からか、Linux のコマンド名も伝統的なものは8文字以内に収まっているような気がします。
+とはいえさすがにもう 2019 年、<code>docker-compose</code> のように長いコマンド名も普通だし、
+無理やり8文字に収めようとすると直感的でなくなってしまう問題点もあります。</p>
 
-          <div id="social"></div>
-        </div>
-        <h3>この記事の執筆者</h3>
-        <div class="author">
-          <picture>
-            <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x" />
-            <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502" />
-          </picture>
-          <div>
-            <h4>
-              hato &emsp;<a
-                href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw"
-                class="twitter-follow-button"
-                data-show-screen-name="false"
-                data-show-count="false"
-                >Follow @bluehood_admin</a
-              ><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-            </h4>
-            <p>
-              中学生の頃に 6502 という CPU からプログラミングの世界に入りました。 C/C++
-              で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
-            </p>
-          </div>
+        <div id="social"></div>
+      </div>
+      <h3>この記事の執筆者</h3>
+      <div class="author">
+        <picture>
+          <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x">
+          <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502">
+        </picture>
+        <div>
+          <h4>hato
+            &emsp;<a href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-screen-name="false" data-show-count="false">Follow @bluehood_admin</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            
+          </h4>
+          <p>
+            中学生の頃に 6502 という CPU からプログラミングの世界に入りました。
+            C/C++ で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
+          </p>
         </div>
       </div>
-    </article>
+    </div>
+  </article>
 
     <footer>
-      <div>
-        2019 Hood<br />
-        <a href="https://github.com/blue-hood/apps" target="”_blank”">Published</a> under the MIT license. <br />
-        <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
-      </div>
-    </footer>
+  <div>
+    2019 Hood<br>
+    <a href="https://github.com/blue-hood/apps" target=”_blank”>Published</a> under the MIT license. <br>
+    <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
+  </div>
+</footer>
     <script src="/js/app.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
-    <script src="https://b-hood.site/js/social-button.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://b-hood.site/js/social-button.js"></script>
   </body>
 </html>
