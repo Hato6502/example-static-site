@@ -52,7 +52,7 @@
 </nav>
       <article class="articles-show">
     <div>
-      <div>2019-06-17</div>
+      <div>2019-06-18</div>
       <h1>マイコンを使わないアナログ式電子オルゴールを作った</h1>
       <div class="content">
         <picture>
@@ -83,51 +83,58 @@
 <p>15VのACアダプタからレールスプリッタで±7.5V電源を生成、プッシュプルで大電流対応。
 その他、NJM4580DDオペアンプの動作電圧を作ったり、デジタル用+5Vを三端子レギュレータで作っています。</p>
 <ul>
-<li><a href="/storage/articles/AnalogOrgel/PowerSupply.CE3">CE3 ファイル</a>
-<img src="/storage/articles/images/df10230b.png"></li>
+<li><a href="/storage/articles/AnalogOrgel/PowerSupply.CE3">CE3 ファイル</a></li>
 </ul>
+<p><img src="/storage/articles/images/df10230b.png"></p>
 <h3>紙テープ巻取回路</h3>
 <p>紙テープを一定の速度で巻き取ります。
 モーターの速度をフィードバックで制御していますが、なんと速度センサーもまたモーター。
-紙テープにローラーを当ててモーターの軸を回し、微弱な起電圧を300倍に増幅してフィードバックの基準電圧にします。</p>
+紙テープにローラーを当ててモーターの軸を回し、微弱な起電圧を300倍に増幅します。
+そして、半固定抵抗によって定めた基準電圧とコンパレータによって比較し、
+紙テープを巻き取るモーターをON/OFFします。
+モーターは激しいノイズ源になりそうなので、3V 電池を使って電源を隔離しています。</p>
 <ul>
-<li><a href="/storage/articles/AnalogOrgel/TapeRoller.CE3">CE3 ファイル</a>
-<img src="/storage/articles/images/4d87a9a1.png"></li>
+<li><a href="/storage/articles/AnalogOrgel/TapeRoller.CE3">CE3 ファイル</a></li>
 </ul>
+<p><img src="/storage/articles/images/4d87a9a1.png"></p>
 <h3>紙テープ読取回路</h3>
-<p>8ビット幅の紙テープをフォトリフレクタで読み取ります。
+<p>黒を1、白を0のデジタル信号として、8ビット幅の紙テープをフォトリフレクタで読み取ります。
 1ビットはノートオン信号として、これがHiのときに残りの7ビットを読み取るようにします。</p>
 <ul>
-<li><a href="/storage/articles/AnalogOrgel/TapeReader.CE3">CE3 ファイル</a>
-<img src="/storage/articles/images/69b2f114.png"></li>
+<li><a href="/storage/articles/AnalogOrgel/TapeReader.CE3">CE3 ファイル</a></li>
 </ul>
+<p><img src="/storage/articles/images/69b2f114.png"></p>
 <h3>音階デコーダ</h3>
-<p>音階信号（ドレミファソラシドと半音）からオクターブ４の周波数信号を生成します。</p>
+<p>音階信号（ドレミファソラシドと半音）からオクターブ４の周波数信号を生成します。
+音階に対応する周波数は半固定抵抗で調整する必要があります。
+また、周波数出力 <code>Vfreq4</code> はインピーダンスありの負電圧となります（オクターブデコーダとの兼ね合いのため）。</p>
 <ul>
-<li><a href="/storage/articles/AnalogOrgel/ScaleDecoder.CE3">CE3 ファイル</a>
-<img src="/storage/articles/images/7742b6a2.png"></li>
+<li><a href="/storage/articles/AnalogOrgel/ScaleDecoder.CE3">CE3 ファイル</a></li>
 </ul>
+<p><img src="/storage/articles/images/7742b6a2.png"></p>
 <h3>オクターブデコーダ</h3>
-<p>オクターブ４の周波数信号をもとに、オクターブ0~7に変調します。</p>
+<p>オクターブ４の周波数信号をもとに、オクターブ 0〜7 に変調します。
+オクターブ０は実質 0V を出力することになります。
+こちらも、各オクターブごとに半固定抵抗で周波数の調整が必要です。</p>
 <ul>
-<li><a href="/storage/articles/AnalogOrgel/OctaveDecoder.CE3">CE3 ファイル</a>
-<img src="/storage/articles/images/63245516.png"></li>
+<li><a href="/storage/articles/AnalogOrgel/OctaveDecoder.CE3">CE3 ファイル</a></li>
 </ul>
+<p><img src="/storage/articles/images/63245516.png"></p>
 <h3>エンベロープ回路</h3>
 <p>音量を変化させて減衰を表現します。
 単純なコンデンサの充電放電と、分圧回路ですね。
 なお、コンデンサの急放電によるストレスは無視。</p>
 <ul>
-<li><a href="/storage/articles/AnalogOrgel/Envelope.CE3">CE3 ファイル</a>
-<img src="/storage/articles/images/b4215aeb.png"></li>
+<li><a href="/storage/articles/AnalogOrgel/Envelope.CE3">CE3 ファイル</a></li>
 </ul>
+<p><img src="/storage/articles/images/b4215aeb.png"></p>
 <h3>ノコギリ波VCO&amp;VCA</h3>
 <p>周波数と音量を電圧として入力するとノコギリ波が生成されます。
 周波数については入力電圧との線形性が成り立ちますが、振幅（音量）についてはJ-FETの特性の影響を受けます。</p>
 <ul>
-<li><a href="/storage/articles/AnalogOrgel/SawWave.CE3">CE3 ファイル</a>
-<img src="/storage/articles/images/fcf3dc8e.png"></li>
+<li><a href="/storage/articles/AnalogOrgel/SawWave.CE3">CE3 ファイル</a></li>
 </ul>
+<p><img src="/storage/articles/images/fcf3dc8e.png"></p>
 <h2>3Dモデル</h2>
 <p>紙テープ読取装置の 3D モデルです。
 3D プリンタで印刷し、接着剤で組み立てれば出来上がります。
@@ -182,7 +189,7 @@
           <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502">
         </picture>
         <div>
-          <h4>hato
+          <h4>hata
             &emsp;<a href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-screen-name="false" data-show-count="false">Follow @bluehood_admin</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             
           </h4>
