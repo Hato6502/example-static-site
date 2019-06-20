@@ -1,0 +1,357 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106651880-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-106651880-2');
+    </script>
+
+      <meta charset="utf-8">
+<title>【PHPMD 対応】husky &amp; lint-staged で CI を実行する - Hood</title>
+ <meta name="description" content="CI をローカル環境に構築することで、サーバーレスでコードの品質を保つ方法を紹介します。"> <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@bluehood_admin">
+<meta property="og:url" content="https://b-hood.site/articles/husky/">
+<meta property="og:title" content="【PHPMD 対応】husky &amp; lint-staged で CI を実行する">
+ <meta property="og:description" content="CI をローカル環境に構築することで、サーバーレスでコードの品質を保つ方法を紹介します。"> <meta property="og:image" content="https://b-hood.site/storage/articles/images/2fa79dbd.jpg">
+
+<link rel="canonical" href="https://b-hood.site/articles/husky/">
+<link rel="icon" href="https://b-hood.site/images/favicon@32px.png" sizes="32x32">
+<link rel="icon" href="https://b-hood.site/images/favicon@192px.png" sizes="192x192">
+
+    <link href="/css/app.css?id=48c67f8cf181584ac8cc" rel="stylesheet">
+      <link rel="stylesheet" href="https://b-hood.site/css/social-button.css" />
+  </head>
+  <body>
+    <nav>
+  <div>
+    <a href="https://b-hood.site/"><h1>Hood</h1></a>
+    <div class="nav-menu">
+      
+      <a href="https://b-hood.site/articles/">Articles</a>
+      <a href="https://github.com/blue-hood" target="_blank">GitHub</a>
+      <a href="https://twitter.com/bluehood_admin" target="_blank">Twitter</a>
+      <a href="https://miniblog.bluehood.net" target="_blank">MiniBlog</a>
+    </div>
+    <div class="hamburger-button">Menu</div>
+  </div>
+</nav>
+      <ol class="breadcrumb">
+    <div>
+              <li class="breadcrumb-item">
+                      <a href="https://b-hood.site/">Hood</a>
+                  </li>
+              <li class="breadcrumb-item">
+                      <a href="https://b-hood.site/articles/">記事一覧</a>
+                  </li>
+              <li class="breadcrumb-item">
+                      【PHPMD 対応】husky &amp; lint-staged で CI を実行する
+                  </li>
+          </div>
+  </ol>
+
+  <article class="articles-show">
+    <div>
+      <div>2019-06-20</div>
+      <h1>【PHPMD 対応】husky &amp; lint-staged で CI を実行する</h1>
+      <div class="content">
+        <picture>
+  <source type="image/webp" srcset="/storage/articles/images/2fa79dbd.webp 1x,/storage/articles/images/167bfe56.webp 2x">
+  <img src="/storage/articles/images/2fa79dbd.jpg" srcset="/storage/articles/images/167bfe56.jpg 2x">
+</picture>
+<p>みなさんこんにちは、今回は husky と lint-staged を使って CI 環境をローカルに構築する方法を紹介したいと思います。</p>
+<ol class="table-of-contents"></ol>
+<p><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ディスプレイ広告 -->
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-7008780049786244"
+    data-ad-slot="5063315418"
+    data-ad-format="auto"
+    data-full-width-responsive="true"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script></p>
+<h2>継続的インテグレーション（CI）とは</h2>
+<p><a href="https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A%E7%9A%84%E3%82%A4%E3%83%B3%E3%83%86%E3%82%B0%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">WikiPedia</a><br>
+継続的インテグレーション（CI）とは、ソフトウェア開発においてソースコードの品質や保守性を保ち、持続可能な開発を続けていくための方法です。
+つまり、他の人が見ても理解しやすく、また自分が書いた古いコードでも処理内容が理解できるようにプログラミングしていくということですね。</p>
+<p>個人の趣味のスクリプトであれば CI を導入する必要はないかもしれませんが、お仕事などでのチームでの開発では重要となると思います。
+また GitHub で公開するものに対しても、CI を導入するとメリットが大きいと思います。</p>
+<p>ソースコードの属人性（その人にしか分からないような書き方）を解消するために、開発ルールを定めることがあります。
+たとえば、コーディングスタイルを定義したり（<a href="https://google.github.io/styleguide/cppguide.html">Google C++ Style Guide</a> など）、コードレビューをするなどです。
+これらは整形ツールやコーディングチェック（<a href="https://ja.wikipedia.org/wiki/Lint">lint</a>）を使って自動化することができます。</p>
+<h2>サーバーレスで CI を導入</h2>
+<p>CI を導入する方法として、CI サーバーを立てる方法があります。
+たとえば、GitHub では <a href="https://travis-ci.org/">Travis CI</a> を導入することで、<code>git commit</code> 時に自動で CI を実行してくれます。
+さらに、CI の実行結果を <a href="https://qiita.com/dtan4/items/13b0ea9edf5b99926446">GitHub のバッジ</a> として公言することができ、リポジトリの質を保証する１つの指標にできます。</p>
+<p>しかし、CI サービスは有料プランのものもあり（Public リポジトリは無料も）、特に社内開発ではコストになる場合があります。
+そこで、CI をローカル環境に導入し、<code>git commit</code> 時に自動でコーディングチェックと自動整形をしたいと思います。</p>
+<h2>huskey と lint-staged を使うメリット</h2>
+<p>コミット時に CI スクリプトを実行するには <a href="https://qiita.com/sue71/items/0b2f4a607e47c3095820">pre-commit</a> を自前で記述することも可能です。
+しかし、他の人と共同開発する場合では手動で <code>pre-commit</code> や自動整形ツール（prettier や eslint）を導入する必要がありました。</p>
+<p>そこで、husky を使って pre-commit をフックし、lint-staged でコーディングチェックと自動整形を実行させたいと思います。
+リポジトリ直下に npm で <code>husky</code>、<code>lint-staged</code>、<code>prettier</code>、<code>eslint</code> などをインストールすれば、以降は <code>npm install</code> だけで CI 環境が整います。</p>
+<h2>CI 環境の導入</h2>
+<p>npm で husky と lint-staged、prettier、eslint をインストールします。</p>
+<pre class="prettyprint">
+$ npm install --save-dev husky lint-staged prettier eslint @prettier/plugin-php
+</pre>
+<p><code>.huskyrc.json</code> を用意し、pre-commit のフックに lint-staged を指定する設定を書きます。</p>
+<pre class="prettyprint linenums">
+{
+  "hooks": {
+    "pre-commit": "lint-staged"
+  }
+}
+</pre>
+<p>今度は <code>.lintstagedrc.json</code> を用意し、ファイルごとに実行する CI を定義します。</p>
+<pre class="prettyprint linenums">
+{
+  "linters": {
+    "*.php": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{css,scss}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{yaml,yml,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
+</pre>
+<p>最後に、prettier や eslint の設定ファイルを設置すれば完了です。
+<code>.eslintrc.js</code> は <code>eslint --init</code> で作るのもいいと思います。</p>
+<ul>
+<li>.prettierrc</li>
+</ul>
+<pre class="prettyprint linenums">
+{
+  printWidth: 120,
+  tabWidth: 2
+}
+</pre>
+<pre class="prettyprint">
+$ node_modules/.bin/eslint --init
+</pre>
+<h2>CI を試してみる</h2>
+<p>試しに <code>test.php</code> を作ってみます。</p>
+<pre class="prettyprint linenums">
+&lt;?php
+  $test=1;
+while(1){
+          test();
+}
+</pre>
+<p>こんなやる気ナッシングなコードでも、<code>git add</code> してコミットすると、</p>
+<pre class="prettyprint">
+$ git add .
+$ git commit -m "PHP の prettier テスト。"
+husky > pre-commit (node v8.9.1)
+  ↓ Stashing changes... [skipped]
+    → No partially staged files found...
+  ✔ Running linters...
+[master 78d95f6] PHP の prettier テスト。
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+</pre>
+<ul>
+<li>test.php</li>
+</ul>
+<pre class="prettyprint linenums">
+&lt;?php
+$test = 1;
+while (1) {
+  test();
+}
+</pre>
+<p>きれいになりました。
+JavaScript だと、</p>
+<pre class="prettyprint linenums">
+const test = 0;
+test = "This is const. ";
+test;
+</pre>
+<pre class="prettyprint">
+$ git add .
+$ git commit -m "JavaaScript の eslint テスト。"
+husky > pre-commit (node v8.9.1)
+  ↓ Stashing changes... [skipped]
+    → No partially staged files found...
+  ❯ Running linters...
+    ↓ Running tasks for *.php [skipped]
+      → No staged files match *.php
+    ❯ Running tasks for *.{js,jsx,ts,tsx}
+      ✖ eslint --fix
+        git add
+    ↓ Running tasks for *.{css,scss} [skipped]
+      → No staged files match *.{css,scss}
+    ↓ Running tasks for *.{yaml,yml,md} [skipped]
+      → No staged files match *.{yaml,yml,md}
+
+
+
+✖ eslint --fix found some errors. Please fix them and try committing again.
+
+/home/hato/repo/test.js
+2:1  error  'test' is constant  no-const-assign
+
+✖ 1 problem (1 error, 0 warnings)
+
+husky > pre-commit hook failed (add --no-verify to bypass)
+</pre>
+<p>このように <code>const</code> のエラーでコミットを止めてくれます。</p>
+<h2>PHPMD を使うには？</h2>
+<p>PHP の静的解析ツールとして PHPMD が有名です。
+スタイルチェックだけでなくプログラムの意味解析を行い、保守性を確保するためのアドバイスをしてくれます。
+PHPMD のインストールには composer を利用します。</p>
+<pre class="prettyprint">
+$ composer require phpmd/phpmd
+</pre>
+<p>肝心の phpmd を lint-staged で使う方法ですが……実は相性が悪いです。
+まず、<a href="https://github.com/phpmd/phpmd">phpmd のコマンド書式</a>より、次のようなコマンドで phpmd を実行できます。</p>
+<pre class="prettyprint">
+$ phpmd test.php,test2.php text cleancode,codesize,controversial,design,naming,unusedcode
+</pre>
+<p>このように、チェックする php ファイルを第１引数にカンマ区切りで指定します。
+それに対し、<a href="https://www.npmjs.com/package/lint-staged">lint-staged</a> では次のようにコマンドが展開されます。</p>
+<pre class="prettyprint">
+$ phpmd test.php test2.php
+</pre>
+<p>つまり、php ファイルをコマンド末尾にスペース区切りで指定してしまうのです。
+そこで、phpmd と lint-staged をうまくつなぎ合わせるシェルスクリプトを書きます。</p>
+<ul>
+<li>.lintstaged-phpmd</li>
+</ul>
+<pre class="prettyprint linenums">
+#!/bin/bash
+targets=`echo "$@" | sed "s/ /,/g"`
+vendor/bin/phpmd ${targets} text cleancode,codesize,controversial,design,naming,unusedcode
+</pre>
+<ul>
+<li>.lintstagedrc.json</li>
+</ul>
+<pre class="prettyprint linenums">
+{
+  "linters": {
+    "*.php": [
+      "prettier --write",
+      "./.lintstaged-phpmd",
+      "git add"
+    ]
+  }
+}
+</pre>
+<p>エラーが出る php ファイルを２つ用意して、</p>
+<ul>
+<li>test.php</li>
+</ul>
+<pre class="prettyprint linenums">
+&lt;?php
+$test = 1;
+while (1) {
+  test();
+}
+class not_camel_case
+{
+}
+</pre>
+<ul>
+<li>test2.php</li>
+</ul>
+<pre class="prettyprint linenums">
+&lt;?php
+class not_camel_case
+{
+}
+</pre>
+<p>コミットしてみます。</p>
+<pre class="prettyprint">
+$ git add .
+$ chmod +x .lintstaged-phpmd	# 実行権限の付与を忘れずに！
+$ git commit -m "PHP の PHPMD テスト。"
+husky > pre-commit (node v8.9.1)
+  ↓ Stashing changes... [skipped]
+    → No partially staged files found...
+  ❯ Running linters...
+    ❯ Running tasks for *.php
+      ✔ prettier --write
+      ✖ ./.lintstaged-phpmd
+        git add
+    ↓ Running tasks for *.{js,jsx,ts,tsx} [skipped]
+      → No staged files match *.{js,jsx,ts,tsx}
+    ↓ Running tasks for *.{css,scss} [skipped]
+      → No staged files match *.{css,scss}
+    ↓ Running tasks for *.{yaml,yml,md} [skipped]
+      → No staged files match *.{yaml,yml,md}
+
+
+
+✖ ./.lintstaged-phpmd found some errors. Please fix them and try committing again.
+/home/hato/repo/test.php:6	The class not_camel_case is not named in CamelCase.
+/home/hato/repo/test2.php:2	The class not_camel_case is not named in CamelCase.
+husky > pre-commit hook failed (add --no-verify to bypass)
+</pre>
+<p>これで、フロントエンドもバックエンドも CI が実行できますね。
+もっと良い lint-staged と PHPMD の連携方法はないでしょうかね？</p>
+
+
+        <div id="social"></div>
+
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- ディスプレイ広告 -->
+        <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-7008780049786244"
+            data-ad-slot="5063315418"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+
+      <h3>この記事の執筆者</h3>
+      <div class="author">
+        <picture>
+          <source type="image/webp" srcset="https://b-hood.site/storage/authors/images/hato6502.webp 1x">
+          <img src="https://b-hood.site/storage/authors/images/hato6502.png" alt="hato6502">
+        </picture>
+        <div>
+          <h4>hata
+            &emsp;<a href="https://twitter.com/bluehood_admin?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-screen-name="false" data-show-count="false">Follow @bluehood_admin</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            
+          </h4>
+          <p>
+            中学生の頃に 6502 という CPU からプログラミングの世界に入りました。
+            C/C++ で１から作ることも好きですが、最近は変化の激しい IT 業界をみて Web 系にシフトしつつあります。
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+    <footer>
+  <div>
+    2019 Hood<br>
+    <a href="https://github.com/blue-hood/apps" target=”_blank”>Published</a> under the MIT license. <br>
+    <a href="https://b-hood.site/privacy/">プライバシーポリシー</a>
+  </div>
+</footer>
+    <script src="/js/app.js?id=6fe1da13cc6879d3400a"></script>
+      <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://b-hood.site/js/social-button.js"></script>
+  </body>
+</html>
