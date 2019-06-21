@@ -1,0 +1,4 @@
+prefix="https://b-hood.site"
+function difftest () {
+  return 0;
+}
